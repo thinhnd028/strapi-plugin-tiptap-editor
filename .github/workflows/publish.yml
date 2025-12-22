@@ -38,7 +38,7 @@ jobs:
 
       - name: Set version from Release Tag
         run: |
-          npm version ${GITHUB_REF_name#v} --no-git-tag-version
+          npm pkg set version=${GITHUB_REF_name#v}
         env:
           GITHUB_REF_name: ${{ github.ref_name }}
 
