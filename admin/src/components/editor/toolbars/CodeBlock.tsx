@@ -1,0 +1,37 @@
+import { forwardRef } from "react";
+import { Code } from "lucide-react";
+import { useEditorContext } from "../partials/EditorProvider";
+import ToolbarButton, { ToolbarButtonProps } from "../partials/ToolbarButton";
+import styled from "styled-components";
+
+// Styled Components
+const CodeIcon = styled(Code)`
+  width: 16px;
+  height: 16px;
+`;
+
+const CodeBlockToolbar = forwardRef<HTMLButtonElement, ToolbarButtonProps>(
+  ({ className, onClick, children, ...props }, ref) => {
+    const { editor } = useEditorContext();
+    return (
+      <ToolbarButton
+        tooltip="Code Block"
+        aria-label="Insert code block"
+        isActive={editor?.isActive("codeBlock")}
+        onClick={(e) => {
+          editor?.chain().focus().toggleCodeBlock().run();
+          onClick?.(e);
+        }}
+        disabled={!editor?.can().chain().focus().toggleCodeBlock().run()}
+        ref={ref}
+        {...props}
+      >
+        {children || <CodeIcon />}
+      </ToolbarButton>
+    );
+  },
+);
+
+CodeBlockToolbar.displayName = "CodeBlockToolbar";
+
+export { CodeBlockToolbar };

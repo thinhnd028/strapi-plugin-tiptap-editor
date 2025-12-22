@@ -1,0 +1,85 @@
+// src/components/media-library/MediaLibraryModal.tsx
+import { memo, useCallback } from "react";
+import { useStrapiApp, } from "@strapi/strapi/admin";
+import { createPortal } from "react-dom";
+import { safelyResetPointerEvents } from "../utils/dom";
+
+/**
+ * Represents a media file from the Strapi Media Library.
+ */
+export interface MediaFile {
+  id: number
+  url: string;
+  alt: string;
+  caption: string;
+  name: string;
+  mime: string;
+  width?: number;
+  height?: number;
+  formats?: any;
+}
+
+interface MediaLibraryModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSelect: (file: MediaFile) => void;
+  multiple?: boolean;
+}
+
+/**
+ * Modal component for selecting assets from the Strapi Media Library.
+ * Uses Strapi's internal MediaLib component.
+ */
+export const MediaLibraryModal = memo(({
+  isOpen,
+  onClose,
+  onSelect,
+  multiple = false
+}: MediaLibraryModalProps) => {
+  const components = useStrapiApp('MediaLib', state => state.components);
+  const MediaLibraryDialog = components?.['media-library'];
+
+  const handleSelectAssets = useCallback((files: any[]) => {
+    if (!files || files.length === 0) return;
+
+    const selectedFiles = multiple ? files : [files[0]];
+
+    selectedFiles.forEach(file => {
+      const formattedFile: MediaFile = {
+        id: file.id,
+        url: file.url.startsWith('http') ? file.url : `${window.strapi?.backendURL}${file.url}`,
+        alt: file.alternativeText || file.name,
+        caption: file.caption || file.name,
+        name: file.name,
+        mime: file.mime,
+        width: file.width,
+        height: file.height,
+        formats: file.formats,
+      };
+
+      onSelect(formattedFile);
+    });
+
+    onClose();
+  }, [onSelect, onClose, multiple]);
+
+  if (!isOpen || !MediaLibraryDialog) return null;
+
+  return createPortal(
+    <MediaLibraryDialog
+      // @ts-ignore
+      onClose={() => {
+        onClose();
+        safelyResetPointerEvents();
+      }}
+      onSelectAssets={(f: any) => {
+        handleSelectAssets(f);
+        safelyResetPointerEvents();
+      }}
+      allowedTypes={['images']}
+    />,
+    document.body
+  );
+});
+
+MediaLibraryModal.displayName = 'MediaLibraryModal';
