@@ -1,5 +1,5 @@
 {
-  "version": "0.0.12",
+  "version": "0.0.1",
   "keywords": [],
   "type": "commonjs",
   "exports": {
@@ -106,7 +106,7 @@
       "tiptap"
     ]
   },
-  "name": "strapi-plugin-tiptap-editor",
+  "name": "@tnd028/strapi-plugin-tiptap-editor",
   "repository": {
     "type": "git",
     "url": "https://github.com/thinhnd028/strapi-plugin-tiptap-editor.git"

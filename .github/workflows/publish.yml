@@ -36,6 +36,12 @@ jobs:
       - run: npm ci
       - run: npm run build
 
+      - name: Set version from Release Tag
+        run: |
+          npm version ${GITHUB_REF_name#v} --no-git-tag-version
+        env:
+          GITHUB_REF_name: ${{ github.ref_name }}
+
       - name: Publish to npm
         run: npm publish --access public
         env:
