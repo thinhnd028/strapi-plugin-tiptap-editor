@@ -85,7 +85,6 @@ const TextEditorInput = React.memo(React.forwardRef<{ focus: () => void }, Tipta
                                 value={value}
                                 onChange={handleEditorChange}
                                 disabled={disabled}
-                                placeholder={placeholder}
                             />
                         </EditorContainer>
                     </CustomComponentProvider>

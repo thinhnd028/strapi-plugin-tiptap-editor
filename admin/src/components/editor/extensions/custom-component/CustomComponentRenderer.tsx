@@ -1,10 +1,10 @@
 // src/tiptap/extensions/custom-component/CustomComponentRenderer.tsx
-import { NodeViewWrapper, NodeViewContent } from '@tiptap/react';
+import { NodeViewWrapper } from '@tiptap/react';
 import { Edit3, Trash } from 'lucide-react';
-import { useCustomComponentEdit } from "./Store";
-import styled from 'styled-components';
-import { CustomComponentAttributes } from './types';
 import { useEffect } from 'react';
+import styled from 'styled-components';
+import { useCustomComponentEdit } from "./Store";
+import { CustomComponentAttributes } from './types';
 
 const Wrapper = styled(NodeViewWrapper) <{ $selected?: boolean }>`
   position: relative;

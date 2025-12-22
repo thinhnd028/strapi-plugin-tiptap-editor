@@ -17,9 +17,6 @@ import {
 import { useEditorContext } from "../partials/EditorProvider";
 import ToolbarButton from "../partials/ToolbarButton";
 
-// Styled Components
-
-
 const DropdownMenuItemStyled = styled(DropdownMenuItem)`
   display: flex;
   align-items: center;

@@ -1,5 +1,4 @@
 // src/editor/extensions/image-placeholder.tsx
-import { useState, useCallback, memo, useEffect } from "react";
 import type { NodeViewProps } from "@tiptap/core";
 import {
   type CommandProps,
@@ -9,11 +8,10 @@ import {
   ReactNodeViewRenderer,
 } from "@tiptap/react";
 import { Image as LucideImage } from "lucide-react";
-import { NODE_HANDLES_SELECTED_STYLE_CLASSNAME } from "../utils";
-import { Tabs } from "@strapi/design-system";
-import { Button } from "../../ui/button";
+import { useCallback, useEffect, useState } from "react";
 import styled from "styled-components";
 import { type MediaFile, MediaLibraryModal } from "../../MediaLibraryModal";
+import { NODE_HANDLES_SELECTED_STYLE_CLASSNAME } from "../utils";
 
 export interface ImagePlaceholderOptions {
   HTMLAttributes: Record<string, any>;

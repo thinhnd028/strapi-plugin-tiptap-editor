@@ -3,7 +3,6 @@ import {
   ArrowLeft,
   ArrowRight,
   ArrowUp,
-  ChevronDown,
   Columns3,
   Rows3,
   Table,
@@ -18,7 +17,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../../ui/dropdown-menu";
-import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/tooltip";
+import { TooltipContent } from "../../ui/tooltip";
 import { useEditorContext } from "../partials/EditorProvider";
 import ToolbarButton from "../partials/ToolbarButton";
 

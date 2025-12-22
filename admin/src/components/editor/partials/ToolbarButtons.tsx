@@ -35,11 +35,6 @@ const ToolbarDefinitions = {
       default: mod.StrikeThroughToolbar,
     }))
   ),
-  code: lazy(() =>
-    import("../toolbars/Code").then((mod) => ({
-      default: mod.CodeToolbar,
-    }))
-  ),
 
   // === GRUP 2: LISTS & INDENTATION ===
   lists: lazy(() =>
@@ -62,11 +57,6 @@ const ToolbarDefinitions = {
   horizontalRule: lazy(() =>
     import("../toolbars/HorizontalRule").then((mod) => ({
       default: mod.HorizontalRuleToolbar,
-    }))
-  ),
-  hardBreak: lazy(() =>
-    import("../toolbars/HardBreak").then((mod) => ({
-      default: mod.HardBreakToolbar,
     }))
   ),
   color: lazy(() =>
@@ -99,11 +89,6 @@ const ToolbarDefinitions = {
   iframe: lazy(() =>
     import("../toolbars/Iframe").then((mod) => ({
       default: mod.IframeToolbar,
-    }))
-  ),
-  codeBlock: lazy(() =>
-    import("../toolbars/CodeBlock").then((mod) => ({
-      default: mod.CodeBlockToolbar,
     }))
   ),
 

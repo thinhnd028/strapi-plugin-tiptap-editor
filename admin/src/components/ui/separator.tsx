@@ -1,8 +1,15 @@
 import { forwardRef } from "react";
-import * as SeparatorPrimitive from "@radix-ui/react-separator";
+import type { ComponentPropsWithoutRef, ElementRef } from "react";
 import styled from "styled-components";
 
-const StyledSeparator = styled(SeparatorPrimitive.Root) <{
+type SeparatorOrientation = "horizontal" | "vertical";
+
+type SeparatorProps = ComponentPropsWithoutRef<"div"> & {
+  orientation?: SeparatorOrientation;
+  decorative?: boolean;
+};
+
+const StyledSeparator = styled.div<{
   $orientation?: "horizontal" | "vertical";
 }>`
   flex-shrink: 0;
@@ -19,23 +26,24 @@ const StyledSeparator = styled(SeparatorPrimitive.Root) <{
   `}
 `;
 
-const Separator = forwardRef<
-  React.ElementRef<typeof SeparatorPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof SeparatorPrimitive.Root>
->(
-  (
-    { orientation = "horizontal", decorative = true, ...props },
-    ref,
-  ) => (
-    <StyledSeparator
-      ref={ref}
-      decorative={decorative}
-      $orientation={orientation}
-      {...props}
-    />
-  ),
+const Separator = forwardRef<ElementRef<"div">, SeparatorProps>(
+  ({ orientation = "horizontal", decorative = true, role, ...props }, ref) => {
+    const computedRole = decorative ? undefined : (role ?? "separator");
+    const ariaOrientation = computedRole === "separator" ? orientation : undefined;
+
+    return (
+      <StyledSeparator
+        ref={ref}
+        $orientation={orientation}
+        role={computedRole}
+        aria-orientation={ariaOrientation}
+        aria-hidden={decorative ? true : undefined}
+        {...props}
+      />
+    );
+  },
 );
 
-Separator.displayName = SeparatorPrimitive.Root.displayName;
+Separator.displayName = "Separator";
 
 export { Separator };

@@ -1,12 +1,9 @@
-import { forwardRef } from "react";
 import {
-  Strikethrough,
-  Underline as UnderlineIcon,
   Check,
-  ChevronDown
+  Strikethrough,
+  Underline as UnderlineIcon
 } from "lucide-react";
-import { useEditorContext } from "../partials/EditorProvider";
-import ToolbarButton, { ToolbarButtonProps } from "../partials/ToolbarButton";
+import { forwardRef } from "react";
 import styled from "styled-components";
 import {
   DropdownMenu,
@@ -16,6 +13,8 @@ import {
   DropdownMenuTrigger,
 } from "../../ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../../ui/tooltip";
+import { useEditorContext } from "../partials/EditorProvider";
+import ToolbarButton, { ToolbarButtonProps } from "../partials/ToolbarButton";
 
 // Styled Components
 const DropdownMenuItemStyled = styled(DropdownMenuItem)`

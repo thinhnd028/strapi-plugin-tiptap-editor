@@ -3,20 +3,15 @@ import { useCallback } from "react";
 import Blockquote from "@tiptap/extension-blockquote";
 import Bold from "@tiptap/extension-bold";
 import Bulletlist from "@tiptap/extension-bullet-list";
-import Code from "@tiptap/extension-code";
-import CodeBlock from "@tiptap/extension-code-block";
 import Document from "@tiptap/extension-document";
 import Dropcursor from "@tiptap/extension-dropcursor";
 import Gapcursor from "@tiptap/extension-gapcursor";
-import HardBreak from "@tiptap/extension-hard-break";
-import Heading from "@tiptap/extension-heading";
 import History from "@tiptap/extension-history";
 import HorizontalRule from "@tiptap/extension-horizontal-rule";
 import Italic from "@tiptap/extension-italic";
 import ListItem from "@tiptap/extension-list-item";
 import OrderedList from "@tiptap/extension-ordered-list";
 import Paragraph from "@tiptap/extension-paragraph";
-import Placeholder from "@tiptap/extension-placeholder";
 import Strike from "@tiptap/extension-strike";
 import Text from "@tiptap/extension-text";
 import TextAlign from "@tiptap/extension-text-align";
@@ -42,23 +37,18 @@ import { useDebounceCallback } from "../../hooks/useDebounceCallback";
 export interface UseEditorOptions
   extends Omit<UseEditorPrimitiveOptions, "onUpdate" | "onBlur"> {
   value?: Content;
-  placeholder?: string;
   throttleDelay?: number;
   output?: "html" | "json" | "text";
   onUpdate?: (value: Content) => void;
   onBlur?: (content: Content) => void;
 }
 
-export const createExtensions = (
-  options: Pick<UseEditorOptions, "placeholder">,
-): Extensions => [
+export const createExtensions = (): Extensions => [
     Document,
     Blockquote,
     Bulletlist,
     OrderedList,
     ListItem,
-    CodeBlock,
-    HardBreak,
     CustomHeading.configure({
       levels: [1, 2, 3, 4, 5, 6],
     }),
@@ -66,7 +56,6 @@ export const createExtensions = (
     HorizontalRule,
     Text,
     Bold,
-    Code,
     Italic,
     Strike,
     Dropcursor,
@@ -79,9 +68,6 @@ export const createExtensions = (
       types: ["heading", "paragraph"],
     }),
     TextStyle,
-    Placeholder.configure({
-      placeholder: options.placeholder,
-    }),
   ];
 
 const getOutput = (
@@ -107,7 +93,6 @@ export const useEditor = ({
   content,
   extensions = [],
   editorProps: { attributes: editorAttributes = {}, ...editorProps } = {},
-  placeholder = "Write something...",
   throttleDelay = 0,
   output,
   onUpdate,
@@ -143,7 +128,7 @@ export const useEditor = ({
   );
 
   const editor = useEditorPrimitive({
-    extensions: [...extensions, ...createExtensions({ placeholder })].filter(
+    extensions: [...extensions, ...createExtensions()].filter(
       (ext, index, self) =>
         self.findIndex((e) => e.name === ext.name) === index,
     ),

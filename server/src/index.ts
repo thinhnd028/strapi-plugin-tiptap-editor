@@ -1,4 +1,3 @@
-import pluginPkg from '../../package.json';
 import { Core } from '@strapi/strapi';
 
 export default {

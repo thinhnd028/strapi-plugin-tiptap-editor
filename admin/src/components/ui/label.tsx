@@ -1,8 +1,8 @@
 import { forwardRef } from "react";
-import { Root as LabelPrimitiveRoot } from "@radix-ui/react-label";
+import type { ComponentPropsWithoutRef, ElementRef } from "react";
 import styled from "styled-components";
 
-const StyledLabel = styled(LabelPrimitiveRoot)`
+const StyledLabel = styled.label`
   font-size: 14px;
   font-weight: 500;
   line-height: 1;
@@ -21,13 +21,13 @@ const OptionalSpan = styled.span`
   color: ${props => props.theme.colors.neutral500};
 `;
 
-interface LabelProps extends React.ComponentPropsWithoutRef<typeof LabelPrimitiveRoot> {
+interface LabelProps extends ComponentPropsWithoutRef<"label"> {
   mandatory?: boolean;
   optional?: boolean;
 }
 
 const Label = forwardRef<
-  React.ElementRef<typeof LabelPrimitiveRoot>,
+  ElementRef<"label">,
   LabelProps
 >(({ children, mandatory, optional, ...props }, ref) => (
   <StyledLabel ref={ref} {...props}>
@@ -37,6 +37,6 @@ const Label = forwardRef<
   </StyledLabel>
 ));
 
-Label.displayName = LabelPrimitiveRoot.displayName;
+Label.displayName = "Label";
 
 export { Label };

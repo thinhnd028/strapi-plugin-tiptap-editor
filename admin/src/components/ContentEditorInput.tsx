@@ -86,7 +86,6 @@ const ContentEditorInput = React.memo(React.forwardRef<{ focus: () => void }, Ti
                                 value={value}
                                 onChange={handleEditorChange}
                                 disabled={disabled}
-                                placeholder={placeholder}
                             />
                         </EditorContainer>
                     </CustomComponentProvider>
