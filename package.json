@@ -113,6 +113,10 @@
     ]
   },
   "name": "strapi-plugin-tiptap-editor",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/thinhnd028/strapi-plugin-tiptap-editor.git"
+  },
   "description": "Tiptap editor for Strapi 5",
   "license": "MIT"
 }
