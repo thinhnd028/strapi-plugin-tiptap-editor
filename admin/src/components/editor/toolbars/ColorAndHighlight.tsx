@@ -24,6 +24,10 @@ const TEXT_COLORS = [
   { name: "Purple", color: "#9333EA" },
   { name: "Pink", color: "#DB2777" },
   { name: "Red", color: "#DC2626" },
+  { name: "Primary", color: "#1D2556" },
+  { name: "Danger", color: "#e8222f" },
+  { name: "Sky", color: "#0ea5e9" },
+  { name: "Warning", color: "#FEF995" },
 ];
 
 const HIGHLIGHT_COLORS = [

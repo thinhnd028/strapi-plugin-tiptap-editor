@@ -55,7 +55,7 @@ const ContentEditorInput = React.memo(React.forwardRef<{ focus: () => void }, Ti
                 target: {
                     name,
                     value: content,
-                    type: "json",
+                    type: "text",
                 },
             } as unknown as React.ChangeEvent<any>;
 

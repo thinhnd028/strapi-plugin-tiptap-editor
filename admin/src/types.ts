@@ -3,7 +3,7 @@ import type { InputProps, FieldValue } from '@strapi/strapi/admin';
 export type TiptapJSONInputProps = Readonly<
   InputProps &
   FieldValue & {
-    value?: JSONContent | JSONContent[] | null;
+    value?: string | JSONContent | JSONContent[] | null;
     labelAction?: React.ReactNode;
     attribute: {
       options: {
