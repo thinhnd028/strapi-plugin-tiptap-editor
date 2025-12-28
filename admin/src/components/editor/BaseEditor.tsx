@@ -112,7 +112,7 @@ export const BaseEditor = forwardRef<Editor | null, BaseEditorProps>(
       onUpdate: onChange,
       value,
       editable: !disabled,
-      output: "json"
+      output: options.output ?? "html",
     });
 
     useImperativeHandle(ref, () => editor as Editor, [editor]);

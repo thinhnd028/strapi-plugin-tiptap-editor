@@ -50,6 +50,7 @@ function ContentEditor({
         "image",
         "iframe",
         "emoji",
+        'customCard'
         // "HTMLToolbar"
     ],
     extensions = [],

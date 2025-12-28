@@ -15,12 +15,12 @@ export default {
    * @param app - The Strapi administration application instance.
    */
   async register(app: any) {
-    console.log('Registering Tiptap Editor plugin (tiptap)...');
-    // Register the "tiptap" custom field
+    console.log('Registering Tiptap Editor plugin (Tiptap)...');
+    // Register the "Tiptap" custom field
     app.customFields.register({
       name: "tiptap",
       pluginId: PLUGIN_ID,
-      type: "json",
+      type: "richtext",
       intlLabel: {
         id: `${PLUGIN_ID}.tiptap.label`,
         defaultMessage: "Tiptap Editor",

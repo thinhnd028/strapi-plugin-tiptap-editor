@@ -5,6 +5,79 @@ import styled from "styled-components";
 import { Edit3, Trash } from "lucide-react";
 import { Button } from "../../ui/button";
 
+function normalizeYoutubeToEmbed(raw: string): string {
+  const input = (raw ?? "").trim();
+  if (!input) return input;
+
+  // If it's already an embed URL, keep as-is.
+  if (/^https?:\/\/(www\.)?youtube\.com\/embed\//i.test(input)) {
+    return input;
+  }
+
+  // Only attempt parsing for absolute URLs.
+  let url: URL;
+  try {
+    url = new URL(input);
+  } catch {
+    return input;
+  }
+
+  const host = url.hostname.replace(/^www\./i, "").toLowerCase();
+  const isYoutubeHost = host === "youtube.com" || host === "m.youtube.com";
+  const isYoutuBeHost = host === "youtu.be";
+  if (!isYoutubeHost && !isYoutuBeHost) return input;
+
+  let videoId: string | null = null;
+
+  if (isYoutuBeHost) {
+    // https://youtu.be/<id>
+    videoId = url.pathname.split("/").filter(Boolean)[0] ?? null;
+  } else {
+    // youtube.com patterns
+    const pathname = url.pathname;
+    if (pathname === "/watch") {
+      videoId = url.searchParams.get("v");
+    } else if (pathname.startsWith("/shorts/")) {
+      videoId = pathname.split("/").filter(Boolean)[1] ?? null;
+    } else if (pathname.startsWith("/live/")) {
+      videoId = pathname.split("/").filter(Boolean)[1] ?? null;
+    } else if (pathname.startsWith("/embed/")) {
+      videoId = pathname.split("/").filter(Boolean)[1] ?? null;
+    }
+  }
+
+  if (!videoId) return input;
+
+  // Preserve some common params that make sense on embed.
+  const embed = new URL(`https://www.youtube.com/embed/${videoId}`);
+  const list = url.searchParams.get("list");
+  const start = url.searchParams.get("start") ?? url.searchParams.get("t");
+  if (list) embed.searchParams.set("list", list);
+  if (start) {
+    // Convert t=1m30s to seconds if possible; otherwise pass through.
+    const seconds = parseYoutubeTimeToSeconds(start);
+    embed.searchParams.set("start", seconds != null ? String(seconds) : start);
+  }
+
+  return embed.toString();
+}
+
+function parseYoutubeTimeToSeconds(value: string): number | null {
+  const v = (value ?? "").trim();
+  if (!v) return null;
+  if (/^\d+$/.test(v)) return Number(v);
+
+  // 1h2m3s / 90s / 3m
+  const match = v.match(/^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$/i);
+  if (!match) return null;
+  const [, h, m, s] = match;
+  const hours = h ? Number(h) : 0;
+  const minutes = m ? Number(m) : 0;
+  const seconds = s ? Number(s) : 0;
+  const total = hours * 3600 + minutes * 60 + seconds;
+  return Number.isFinite(total) && total > 0 ? total : null;
+}
+
 export interface IframeOptions {
   allowFullscreen: boolean;
   HTMLAttributes: {
@@ -84,7 +157,10 @@ export const Iframe = Node.create<IframeOptions>({
         (options: { src: string }) =>
           ({ tr, dispatch }) => {
             const { selection } = tr;
-            const node = this.type.create(options);
+            const node = this.type.create({
+              ...options,
+              src: normalizeYoutubeToEmbed(options.src),
+            });
 
             if (dispatch) {
               tr.replaceRangeWith(selection.from, selection.to, node);
@@ -105,7 +181,7 @@ function TiptapIframeComponent({ node, selected, deleteNode, updateAttributes }:
   const [tempSrc, setTempSrc] = useState(node.attrs.src || "");
 
   const handleSave = () => {
-    updateAttributes({ src: tempSrc });
+    updateAttributes({ src: normalizeYoutubeToEmbed(tempSrc) });
     setIsEditing(false);
   };
 
@@ -178,7 +254,6 @@ const IframeWrapper = styled(NodeViewWrapper) <{ $selected?: boolean }>`
     width: 100%;
     min-height: 300px;
     border: none;
-    border-radius: 4px;
   }
 
   input {
@@ -198,6 +273,5 @@ const Placeholder = styled.div`
   color: #999;
   font-style: italic;
   background: #fafafa;
-  border-radius: 4px;
 `;
 

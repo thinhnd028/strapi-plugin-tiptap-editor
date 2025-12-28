@@ -55,7 +55,7 @@ const TextEditorInput = React.memo(React.forwardRef<{ focus: () => void }, Tipta
                 target: {
                     name,
                     value: content,
-                    type: "json",
+                    type: "text",
                 },
             } as unknown as React.ChangeEvent<any>;
 
