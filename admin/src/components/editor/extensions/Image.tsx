@@ -49,7 +49,8 @@ export const ImageExtension = Image.extend({
       mobileMaxWidth: { default: "100%" },
       useResponsive: { default: false },
       href: { default: null },
-      caption: { default: null },
+      // false = caption disabled; string = caption enabled (may be empty)
+      caption: { default: false },
     };
   },
 
@@ -63,6 +64,9 @@ export const ImageExtension = Image.extend({
           if (typeof dom === 'string') return {};
           const img = dom.querySelector('img');
           if (!img) return false;
+
+          const figcaption = dom.querySelector('figcaption');
+          const captionText = figcaption?.textContent ?? null;
 
           const width = img.getAttribute('width');
           const height = img.getAttribute('height');
@@ -78,6 +82,8 @@ export const ImageExtension = Image.extend({
             media_id: dataMediaId || null,
             originalWidth: dataOriginalWidth && !isNaN(+dataOriginalWidth) ? +dataOriginalWidth : null,
             originalHeight: dataOriginalHeight && !isNaN(+dataOriginalHeight) ? +dataOriginalHeight : null,
+            // If figure has a figcaption, enable caption (string, possibly empty). Otherwise keep disabled.
+            caption: figcaption ? (captionText ?? '') : false,
           };
         },
       },
@@ -100,6 +106,7 @@ export const ImageExtension = Image.extend({
             media_id: dataMediaId || null,
             originalWidth: dataOriginalWidth && !isNaN(+dataOriginalWidth) ? +dataOriginalWidth : null,
             originalHeight: dataOriginalHeight && !isNaN(+dataOriginalHeight) ? +dataOriginalHeight : null,
+            caption: false,
           };
         },
       },
@@ -137,13 +144,14 @@ export const ImageExtension = Image.extend({
       image = ['a', { href, target: '_blank', rel: 'noopener noreferrer' }, image];
     }
 
-    if (caption) {
+    // Render as <figure> when caption is enabled (string, possibly empty)
+    if (caption !== false && caption !== null && caption !== undefined) {
       const figureStyle = `width:${imgAttrs.width || '100%'};`;
       return [
         'figure',
         { style: figureStyle, class: `image-style-${align || 'center'}` },
         image,
-        ['figcaption', { style: "text-align: center; font-style: italic; color: #666; margin-top: 8px;" }, caption]
+        ['figcaption', { style: "text-align: center; font-style: italic; color: #666; margin-top: 8px;" }, caption || '']
       ];
     }
 
@@ -392,7 +400,7 @@ export function TiptapImageComponent(props: NodeViewProps) {
 
   const deleteValueAttributes = () => {
     if (editingMode === 'link') updateAttributes({ href: null });
-    if (editingMode === 'caption') updateAttributes({ caption: null });
+    if (editingMode === 'caption') updateAttributes({ caption: false });
     setEditingMode('none');
   };
 
@@ -422,7 +430,7 @@ export function TiptapImageComponent(props: NodeViewProps) {
           />
 
           {/* Caption Display */}
-          {node.attrs.caption !== null && (
+          {node.attrs.caption !== false && node.attrs.caption !== null && (
             <figcaption style={{
               width: '100%',
               textAlign: 'center'
@@ -430,7 +438,7 @@ export function TiptapImageComponent(props: NodeViewProps) {
               <input
                 className="caption-input"
                 placeholder="Write a caption..."
-                value={node.attrs.caption || ''}
+                value={typeof node.attrs.caption === 'string' ? node.attrs.caption : ''}
                 onChange={(e) => updateAttributes({ caption: e.target.value })}
                 onMouseDown={(e) => e.stopPropagation()}
                 onMouseUp={(e) => e.stopPropagation()}
@@ -566,11 +574,11 @@ export function TiptapImageComponent(props: NodeViewProps) {
 
                   <ControlButton
                     size="sm"
-                    data-active={node.attrs.caption !== null}
+                    data-active={node.attrs.caption !== false && node.attrs.caption !== null}
                     onClick={() => {
                       // Toggle Caption: If exists (even empty), remove it. If null, add empty string.
-                      if (node.attrs.caption !== null) {
-                        updateAttributes({ caption: null });
+                      if (node.attrs.caption !== false && node.attrs.caption !== null) {
+                        updateAttributes({ caption: false });
                       } else {
                         updateAttributes({ caption: '' });
                         // Optional: focus logic could go here if we had a ref to the caption input
@@ -578,7 +586,7 @@ export function TiptapImageComponent(props: NodeViewProps) {
                     }}
                     title="Caption"
                   >
-                    <Captions className={node.attrs.caption !== null ? "text-primary-600" : ""} />
+                    <Captions className={node.attrs.caption !== false && node.attrs.caption !== null ? "text-primary-600" : ""} />
                   </ControlButton>
 
                   {/* <ControlButton size="sm" onClick={() => setEditingMode('alt')}>
