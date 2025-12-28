@@ -123,8 +123,9 @@ const ToolbarButtons: React.FC<{ toolbars?: ToolbarButtonsType[] }> = memo(
       "Separator",
       "bold",
       "italic",
-      "italic",
-      "lists",
+      "strikethrough",
+      "link",
+      "color",
     ],
   }) => {
     const Components = useMemo<
