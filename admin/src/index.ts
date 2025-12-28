@@ -52,25 +52,25 @@ export default {
                   id: 'tiptap-editor.options.preset.description',
                   defaultMessage: 'Select the editor mode',
                 },
-                defaultValue: 'full',
+                defaultValue: 'basic',
                 options: [
-                  {
-                    key: 'full',
-                    value: 'full',
-                    metadatas: {
-                      intlLabel: {
-                        id: 'tiptap-editor.options.preset.full',
-                        defaultMessage: 'Full (Recommended)',
-                      },
-                    },
-                  },
                   {
                     key: 'basic',
                     value: 'basic',
                     metadatas: {
                       intlLabel: {
                         id: 'tiptap-editor.options.preset.basic',
-                        defaultMessage: 'Basic',
+                        defaultMessage: 'Basic (Recommended)',
+                      },
+                    },
+                  },
+                  {
+                    key: 'full',
+                    value: 'full',
+                    metadatas: {
+                      intlLabel: {
+                        id: 'tiptap-editor.options.preset.full',
+                        defaultMessage: 'Full',
                       },
                     },
                   },
