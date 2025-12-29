@@ -3,9 +3,11 @@ import { useCallback } from "react";
 import Blockquote from "@tiptap/extension-blockquote";
 import Bold from "@tiptap/extension-bold";
 import Bulletlist from "@tiptap/extension-bullet-list";
+import { Color } from "@tiptap/extension-color";
 import Document from "@tiptap/extension-document";
 import Dropcursor from "@tiptap/extension-dropcursor";
 import Gapcursor from "@tiptap/extension-gapcursor";
+import Highlight from "@tiptap/extension-highlight";
 import History from "@tiptap/extension-history";
 import HorizontalRule from "@tiptap/extension-horizontal-rule";
 import Italic from "@tiptap/extension-italic";
@@ -44,31 +46,35 @@ export interface UseEditorOptions
 }
 
 export const createExtensions = (): Extensions => [
-    Document,
-    Blockquote,
-    Bulletlist,
-    OrderedList,
-    ListItem,
-    CustomHeading.configure({
-      levels: [1, 2, 3, 4, 5, 6],
-    }),
-    Paragraph,
-    HorizontalRule,
-    Text,
-    Bold,
-    Italic,
-    Strike,
-    Dropcursor,
-    Gapcursor,
-    History.configure({
-      depth: 50,
-    }),
-    ResetMarksOnEnter,
-    TextAlign.configure({
-      types: ["heading", "paragraph"],
-    }),
-    TextStyle,
-  ];
+  Document,
+  Blockquote,
+  Bulletlist,
+  OrderedList,
+  ListItem,
+  CustomHeading.configure({
+    levels: [1, 2, 3, 4, 5, 6],
+  }),
+  Paragraph,
+  HorizontalRule,
+  Text,
+  Bold,
+  Italic,
+  Strike,
+  Dropcursor,
+  Gapcursor,
+  History.configure({
+    depth: 50,
+  }),
+  Highlight.configure({
+    multicolor: true,
+  }),
+  Color,
+  ResetMarksOnEnter,
+  TextAlign.configure({
+    types: ["heading", "paragraph"],
+  }),
+  TextStyle,
+];
 
 const getOutput = (
   editor: Editor,
