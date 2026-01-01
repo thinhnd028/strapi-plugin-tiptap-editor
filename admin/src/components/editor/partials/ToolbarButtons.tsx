@@ -15,11 +15,6 @@ const StyledSeparator = styled(Separator)`
 // Lazy imports for toolbars (tanpa next/dynamic)
 const ToolbarDefinitions = {
   // === GRUP 1: HEADING & TEXT STYLE ===
-  customCard: lazy(() =>
-    import("../toolbars/CustomCard").then((mod) => ({
-      default: mod.CustomCardToolbar,
-    }))
-  ),
   heading: lazy(() =>
     import("../toolbars/Heading").then((mod) => ({
       default: mod.HeadingToolbar,
