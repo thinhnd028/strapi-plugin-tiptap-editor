@@ -64,7 +64,9 @@ const CompactColorButton = styled.button<{ $isActive?: boolean; $color: string; 
   
   ${props => props.$isHighlight
     ? `background-color: ${props.$color}; color: ${props.theme.colors.neutral800};`
-    : `background-color: transparent; color: ${props.$color === 'inherit' ? props.theme.colors.neutral800 : props.$color};`
+    : props.$color.toLowerCase() === '#ffffff'
+      ? `background-color: ${props.theme.colors.neutral800}; color: ${props.$color};`
+      : `background-color: transparent; color: ${props.$color === 'inherit' ? props.theme.colors.neutral800 : props.$color};`
   }
 
   ${props => props.$color === 'inherit' && !props.$isHighlight && `
@@ -73,7 +75,7 @@ const CompactColorButton = styled.button<{ $isActive?: boolean; $color: string; 
     color: ${props.theme.colors.neutral800};
   `}
 
-   ${props => props.$color === 'transparent' && props.$isHighlight && `
+  ${props => props.$color === 'transparent' && props.$isHighlight && `
     background: linear-gradient(to bottom right, transparent 48%, #ff0000 48%, #ff0000 52%, transparent 52%);
     background-color: ${props.theme.colors.neutral100};
   `}
@@ -200,7 +202,7 @@ export const ColorAndHighlightToolbar = () => {
     editor
       ?.chain()
       .focus()
-      .setColor(color === currentColor ? "" : color)
+      .setColor(color.toLowerCase() === currentColor?.toLowerCase() ? "" : color)
       .run();
 
     if (color !== currentColor) {
@@ -212,7 +214,7 @@ export const ColorAndHighlightToolbar = () => {
     editor
       ?.chain()
       .focus()
-      .setHighlight(color === currentHighlight ? { color: "" } : { color })
+      .setHighlight(color.toLowerCase() === currentHighlight?.toLowerCase() ? { color: "" } : { color })
       .run();
 
     if (color !== currentHighlight) {
@@ -252,7 +254,11 @@ export const ColorAndHighlightToolbar = () => {
                     key={`${recent.color}-${recent.isHighlight}-${index}`}
                     name={recent.color}
                     color={recent.color}
-                    isActive={recent.isHighlight ? currentHighlight === recent.color : currentColor === recent.color}
+                    isActive={
+                      recent.isHighlight
+                        ? (currentHighlight?.toLowerCase() === recent.color.toLowerCase())
+                        : (currentColor?.toLowerCase() === recent.color.toLowerCase())
+                    }
                     onClick={() => recent.isHighlight ? handleSetHighlight(recent.color) : handleSetColor(recent.color)}
                     isHighlight={recent.isHighlight}
                   />
@@ -269,7 +275,11 @@ export const ColorAndHighlightToolbar = () => {
                 key={name}
                 name={name}
                 color={color}
-                isActive={currentColor === color}
+                isActive={
+                  color === 'inherit'
+                    ? !currentColor
+                    : currentColor?.toLowerCase() === color.toLowerCase()
+                }
                 onClick={() => handleSetColor(color)}
               />
             ))}
@@ -284,7 +294,11 @@ export const ColorAndHighlightToolbar = () => {
                 key={name}
                 name={name}
                 color={color}
-                isActive={currentHighlight === color}
+                isActive={
+                  color === 'transparent'
+                    ? !currentHighlight
+                    : currentHighlight?.toLowerCase() === color.toLowerCase()
+                }
                 onClick={() => handleSetHighlight(color)}
                 isHighlight
               />

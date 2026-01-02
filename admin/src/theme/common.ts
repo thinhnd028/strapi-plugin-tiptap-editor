@@ -40,30 +40,20 @@ export const common = css`
     .ProseMirror h4,
     .ProseMirror h5,
     .ProseMirror h6 {
+      line-height: 1.2;
       color: var(--tiptap-color-heading);
       font-weight: 600;
       margin-top: 1.5em;
       margin-bottom: 0.5em;
     }
 
-    .ProseMirror h1 {
-      font-size: 40px;
-    }
-    .ProseMirror h2 {
-      font-size: 36px;
-    }
-    .ProseMirror h3 {
-      font-size: 32px;
-    }
-    .ProseMirror h4 {
-      font-size: 28px;
-    }
-    .ProseMirror h5 {
-      font-size: 24px;
-    }
-    .ProseMirror h6 {
-      font-size: 20px;
-    }
+    /* Dùng rem/em thay vì px để responsive */
+    .ProseMirror h1 { font-size: 2.25em; } /* ~36px */
+    .ProseMirror h2 { font-size: 1.75em; } /* ~28px */
+    .ProseMirror h3 { font-size: 1.5em; }  /* ~24px */
+    .ProseMirror h4 { font-size: 1.25em; } /* ~20px */
+    .ProseMirror h5 { font-size: 1em; }    /* ~16px */
+    .ProseMirror h6 { font-size: 0.875em; } /* ~14px */
 
     /* Blockquote */
     .ProseMirror blockquote {
@@ -77,7 +67,6 @@ export const common = css`
     /* Inline code & pre */
     .ProseMirror code {
       background-color: var(--tiptap-color-code-bg);
-      border-radius: ${theme.borderRadius};
       padding: 0.15em 0.3em;
       font-size: 0.9em;
       font-family: monospace;
@@ -86,7 +75,6 @@ export const common = css`
     .ProseMirror pre {
       background-color: var(--tiptap-color-code-bg);
       padding: 1rem;
-      border-radius: ${theme.borderRadius};
       overflow-x: auto;
       font-family: monospace;
     }
@@ -169,8 +157,6 @@ export const common = css`
     /* Images & figures */
     .ProseMirror img {
       max-width: 100%;
-      border-radius: ${theme.borderRadius};
-      /* margin: 1rem 0; */
     }
 
     .ProseMirror figure {
