@@ -126,7 +126,6 @@ export function ImagePlaceholderComponent(props: NodeViewProps) {
     editor.chain().focus().setImage({
       src: file.url,
       alt: file.alt,
-      caption: file.caption,
       title: file.name,
       pixelWidth: file.width,
       pixelHeight: file.height,

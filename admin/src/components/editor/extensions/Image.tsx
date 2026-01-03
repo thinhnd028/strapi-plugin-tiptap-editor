@@ -66,7 +66,7 @@ export const ImageExtension = Image.extend({
           if (!img) return false;
 
           const figcaption = dom.querySelector('figcaption');
-          const captionText = figcaption?.textContent ?? null;
+          const captionText = figcaption?.textContent?.trim() || null;
 
           const width = img.getAttribute('width');
           const height = img.getAttribute('height');
@@ -82,8 +82,8 @@ export const ImageExtension = Image.extend({
             media_id: dataMediaId || null,
             originalWidth: dataOriginalWidth && !isNaN(+dataOriginalWidth) ? +dataOriginalWidth : null,
             originalHeight: dataOriginalHeight && !isNaN(+dataOriginalHeight) ? +dataOriginalHeight : null,
-            // If figure has a figcaption, enable caption (string, possibly empty). Otherwise keep disabled.
-            caption: figcaption ? (captionText ?? '') : false,
+            // Only enable caption if we have actual text
+            caption: captionText ? captionText : false,
           };
         },
       },
@@ -133,9 +133,27 @@ export const ImageExtension = Image.extend({
     if (originalWidth) imgAttrs['data-original-width'] = originalWidth;
     if (originalHeight) imgAttrs['data-original-height'] = originalHeight;
 
-    // Apply alignment style to image if needed
-    if (align) {
-      imgAttrs.style = `${imgAttrs.style || ''}float:${align};margin:${align === 'center' ? '0 auto' : '0'};display:${align === 'center' ? 'block' : 'inline-block'};`;
+    // Determine valid CSS width for figure
+    let cssWidth = '100%';
+    if (imgAttrs.width) {
+      cssWidth = typeof imgAttrs.width === 'number' ? `${imgAttrs.width}px` : imgAttrs.width;
+    }
+
+    const hasCaption = caption !== false && caption !== null && caption !== undefined;
+
+    // Apply alignment style
+    // If we have a caption, we apply alignment to the FIGURE wrapper.
+    // If no caption, we apply it to the IMG.
+    const alignStyles = align ? `float:${align};margin:${align === 'center' ? '0 auto' : '0'};display:${align === 'center' ? 'block' : 'inline-block'};` : '';
+
+    if (!hasCaption && align) {
+      imgAttrs.style = `${imgAttrs.style || ''}${alignStyles}`;
+    }
+
+    // When inside a figure, ensure image is block to avoid inline gaps
+    if (hasCaption) {
+      // Ensure image doesn't overflow figure and scales down if needed
+      imgAttrs.style = `${imgAttrs.style || ''}display:block;max-width:100%;height:auto;`;
     }
 
     let image = ['img', imgAttrs];
@@ -145,13 +163,17 @@ export const ImageExtension = Image.extend({
     }
 
     // Render as <figure> when caption is enabled (string, possibly empty)
-    if (caption !== false && caption !== null && caption !== undefined) {
-      const figureStyle = `width:${imgAttrs.width || '100%'};`;
+    if (hasCaption) {
+      const figureStyle = `width:${cssWidth};max-width:100%;${alignStyles}`;
       return [
         'figure',
         { style: figureStyle, class: `image-style-${align || 'center'}` },
         image,
-        ['figcaption', { style: "text-align: center; font-style: italic; color: #666; margin-top: 8px;" }, caption || '']
+        [
+          'figcaption',
+          { style: "text-align: left; font-style: italic; color: #666; margin-top: 8px; border-left: 2px solid red; padding-left: 10px;" },
+          caption || ''
+        ]
       ];
     }
 
@@ -433,7 +455,10 @@ export function TiptapImageComponent(props: NodeViewProps) {
           {node.attrs.caption !== false && node.attrs.caption !== null && (
             <figcaption style={{
               width: '100%',
-              textAlign: 'center'
+              marginTop: '8px',
+              borderLeft: '2px solid red',
+              paddingLeft: '10px',
+              textAlign: 'left'
             }}>
               <input
                 className="caption-input"
@@ -447,7 +472,7 @@ export function TiptapImageComponent(props: NodeViewProps) {
                   width: '100%',
                   border: 'none',
                   background: 'transparent',
-                  textAlign: 'center',
+                  textAlign: 'left',
                   fontSize: '14px',
                   color: '#666',
                   outline: 'none',
