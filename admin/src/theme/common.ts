@@ -229,9 +229,6 @@ export const common = css`
     .ProseMirror iframe {
       width: 100%;
       aspect-ratio: 16 / 9;
-      border-radius: 0.5rem;
-      margin-top: 1.5rem;
-      margin-bottom: 1.5rem;
     }
 
     /* Caption for Images */

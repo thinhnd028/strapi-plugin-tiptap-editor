@@ -77,8 +77,8 @@ const ToolbarDefinitions = {
     }))
   ),
   image: lazy(() =>
-    import("../toolbars/ImagePlaceholder").then((mod) => ({
-      default: mod.ImagePlaceholderToolbar,
+    import("../toolbars/Image").then((mod) => ({
+      default: mod.ImageToolbar,
     }))
   ),
   emoji: lazy(() =>

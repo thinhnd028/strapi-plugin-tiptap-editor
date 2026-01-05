@@ -1,5 +1,7 @@
 import { type Content, Editor, EditorContent } from "@tiptap/react";
 import { LinkBubbleMenu } from "./partials/LinkBubbleMenu";
+import { ImageBubbleMenu } from "./partials/ImageBubbleMenu";
+import { EditorFooter } from "./partials/EditorFooter";
 import { useEditor, type UseEditorOptions } from "./useEditor";
 import { forwardRef, useImperativeHandle } from "react";
 import { EditorProvider } from "./partials/EditorProvider";
@@ -144,8 +146,10 @@ export const BaseEditor = forwardRef<Editor | null, BaseEditorProps>(
                 editor={editor}
               />
               <LinkBubbleMenu />
+              <ImageBubbleMenu />
               <CustomComponentEditPopover />
             </ContentContainer>
+            <EditorFooter />
           </EditorContainer>
         </EditorProvider>
       </TooltipProvider>

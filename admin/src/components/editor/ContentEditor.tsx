@@ -12,11 +12,11 @@ import TaskItem from '@tiptap/extension-task-item'
 import TaskList from '@tiptap/extension-task-list'
 import Emoji, { gitHubEmojis } from '@tiptap/extension-emoji'
 import Underline from '@tiptap/extension-underline'
+import CharacterCount from '@tiptap/extension-character-count'
 
 import { FileHandler } from "./extensions/fileHandler";
-import { Iframe } from "./extensions/Iframe";
 import { ImageExtension } from "./extensions/Image";
-import { ImagePlaceholder } from "./extensions/ImagePlaceholder";
+import { Iframe } from "./extensions/Iframe";
 import { Link } from "./extensions/link";
 import { SearchAndReplace } from "./extensions/searchAndReplace";
 import {
@@ -66,7 +66,6 @@ function ContentEditor({
                 Link,
                 CustomComponent,
                 SearchAndReplace,
-                ImagePlaceholder,
                 ImageExtension,
                 FileHandler,
                 Iframe,
@@ -90,6 +89,9 @@ function ContentEditor({
                     emojis: gitHubEmojis,
                 }),
                 Underline,
+                CharacterCount.configure({
+                    limit: null,
+                }),
             ]}
             toolbar={<ToolbarButtons toolbars={toolbars} />}
             {...restProps}

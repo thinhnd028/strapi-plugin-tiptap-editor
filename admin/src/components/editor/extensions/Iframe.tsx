@@ -1,9 +1,6 @@
 import { Node, NodeViewProps } from "@tiptap/core";
 import { NodeViewWrapper, ReactNodeViewRenderer } from "@tiptap/react";
-import { useState } from "react";
 import styled from "styled-components";
-import { Edit3, Trash } from "lucide-react";
-import { Button } from "../../ui/button";
 
 function normalizeYoutubeToEmbed(raw: string): string {
   const input = (raw ?? "").trim();
@@ -142,13 +139,14 @@ export const Iframe = Node.create<IframeOptions>({
   },
 
   renderHTML({ HTMLAttributes }) {
-    return ["div", this.options.HTMLAttributes, ["iframe", {
+    // Simplified render: Just the iframe. No wrapper div.
+    return ["iframe", {
       ...HTMLAttributes,
       allow:
         "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share",
       allowfullscreen: HTMLAttributes.allowfullscreen ?? true,
       referrerpolicy: "strict-origin-when-cross-origin"
-    }]];
+    }];
   },
 
   addCommands() {
@@ -176,38 +174,11 @@ export const Iframe = Node.create<IframeOptions>({
 });
 
 // === React component untuk iframe node ===
-function TiptapIframeComponent({ node, selected, deleteNode, updateAttributes }: NodeViewProps) {
-  const [isEditing, setIsEditing] = useState(false);
-  const [tempSrc, setTempSrc] = useState(node.attrs.src || "");
-
-  const handleSave = () => {
-    updateAttributes({ src: normalizeYoutubeToEmbed(tempSrc) });
-    setIsEditing(false);
-  };
-
+function TiptapIframeComponent({ node, selected }: NodeViewProps) {
   return (
     <IframeWrapper $selected={selected}>
-      <div className="iframe-toolbar">
-        {isEditing ? (
-          <>
-            <input
-              value={tempSrc}
-              onChange={(e) => setTempSrc(e.target.value)}
-              placeholder="https://www.youtube.com/embed/..."
-            />
-            <Button onClick={handleSave} size="sm">Save</Button>
-          </>
-        ) : (
-          <>
-            <Button size="icon" variant="ghost" onClick={() => setIsEditing(true)}>
-              <Edit3 size={14} />
-            </Button>
-            <Button size="icon" variant="ghost" onClick={deleteNode}>
-              <Trash size={14} />
-            </Button>
-          </>
-        )}
-      </div>
+      {/* Overlay covers the iframe to prevent interaction and allow selection */}
+      <Overlay />
 
       {node.attrs.src ? (
         <iframe
@@ -220,7 +191,7 @@ function TiptapIframeComponent({ node, selected, deleteNode, updateAttributes }:
           referrerPolicy="strict-origin-when-cross-origin"
         />
       ) : (
-        <Placeholder>Click edit to set iframe URL</Placeholder>
+        <Placeholder>Iframe URL missing</Placeholder>
       )}
     </IframeWrapper>
   );
@@ -229,39 +200,35 @@ function TiptapIframeComponent({ node, selected, deleteNode, updateAttributes }:
 // === Styled Components ===
 const IframeWrapper = styled(NodeViewWrapper) <{ $selected?: boolean }>`
   position: relative;
-  border: 2px solid ${(p) => (p.$selected ? "#4f46e5" : "transparent")};
+  border: 2px solid ${(p) => (p.$selected ? p.theme.colors.primary500 : "transparent")};
+  transition: border-color 0.2s ease;
   border-radius: 0;
   overflow: hidden;
   background: #f8f8f8;
   padding: 0;
   margin: 1em 0;
-
-  .iframe-toolbar {
-    position: absolute;
-    top: 4px;
-    right: 4px;
-    display: flex;
-    gap: 4px;
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 4px;
-    z-index: 2;
-  }
+  
+  /* Reset styles for the wrapper ensuring it displays as block */
+  display: block; 
 
   iframe {
     display: block;
     width: 100%;
     min-height: 300px;
     border: none;
+    pointer-events: none; /* Disable pointer events on iframe specifically */
   }
+`;
 
-  input {
-    width: 240px;
-    padding: 4px 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-  }
+const Overlay = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  background: transparent;
+  cursor: default;
 `;
 
 const Placeholder = styled.div`
@@ -274,4 +241,3 @@ const Placeholder = styled.div`
   font-style: italic;
   background: #fafafa;
 `;
-

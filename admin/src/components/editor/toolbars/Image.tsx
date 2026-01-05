@@ -11,7 +11,7 @@ const ImageIcon = styled(LucideImage)`
   height: 16px;
 `;
 
-const ImagePlaceholderToolbar = forwardRef<
+const ImageToolbar = forwardRef<
   HTMLButtonElement,
   ToolbarButtonProps
 >(({ className, onClick, children, ...props }, ref) => {
@@ -75,6 +75,6 @@ const ImagePlaceholderToolbar = forwardRef<
   );
 });
 
-ImagePlaceholderToolbar.displayName = "ImagePlaceholderToolbar";
+ImageToolbar.displayName = "ImageToolbar";
 
-export { ImagePlaceholderToolbar };
+export { ImageToolbar };

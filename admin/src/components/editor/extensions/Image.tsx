@@ -1,55 +1,47 @@
 import { NodeViewProps } from "@tiptap/core";
 import Image from "@tiptap/extension-image";
 import { NodeViewWrapper, ReactNodeViewRenderer } from "@tiptap/react";
-import {
-  AlignCenter,
-  AlignLeft,
-  AlignRight,
-  Captions,
-  Check,
-  ImageUpscaleIcon,
-  Link as LinkIcon,
-  Replace,
-  Save,
-  Trash,
-  X
-} from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import styled from "styled-components";
-import { type MediaFile, MediaLibraryModal } from "../../MediaLibraryModal";
-import { Button } from "../../ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger
-} from "../../ui/dropdown-menu";
-import { Input } from "../../ui/input";
+import TextareaAutosize from 'react-textarea-autosize';
+
+// Types for Resize Config
+interface ResizeConfig {
+  enabled: boolean;
+  directions: ('top' | 'bottom' | 'left' | 'right')[];
+  minWidth: number;
+  minHeight: number;
+  alwaysPreserveAspectRatio: boolean;
+}
 
 // === EXTENSION IMAGE DENGAN FITUR BARU ===
 export const ImageExtension = Image.extend({
+  addOptions() {
+    return {
+      ...this.parent?.(),
+      resize: {
+        enabled: true,
+        directions: ['left', 'right'], // Default to side handles as before, but user can override
+        minWidth: 50,
+        minHeight: 50,
+        alwaysPreserveAspectRatio: true,
+      } as ResizeConfig,
+    };
+  },
+
   addAttributes() {
     return {
       src: { default: null },
       alt: { default: null },
       title: { default: null },
-      width: { default: "90%" },
+      width: { default: "90%" }, // Default width
       pixelWidth: { default: null },
-      pixelHeight: { default: null },
-      originalWidth: { default: null },
-      originalHeight: { default: null },
-      media_id: { default: null },
-      height: { default: 'auto' },
       align: { default: "left" }, // Default Left Align
-      srcset: { default: null },
       maxWidth: { default: "100%" },
       aspectRatio: { default: null },
       objectFit: { default: "contain" },
-      mobileWidth: { default: "100%" },
-      mobileMaxWidth: { default: "100%" },
       useResponsive: { default: false },
       href: { default: null },
-      // false = caption disabled; string = caption enabled (may be empty)
       caption: { default: false },
     };
   },
@@ -70,19 +62,11 @@ export const ImageExtension = Image.extend({
 
           const width = img.getAttribute('width');
           const height = img.getAttribute('height');
-          const dataMediaId = img.getAttribute('data-media-id');
-          const dataOriginalWidth = img.getAttribute('data-original-width');
-          const dataOriginalHeight = img.getAttribute('data-original-height');
 
           return {
             src: img.getAttribute('src'),
             alt: img.getAttribute('alt'),
             pixelWidth: width && !isNaN(+width) ? +width : null,
-            pixelHeight: height && !isNaN(+height) ? +height : null,
-            media_id: dataMediaId || null,
-            originalWidth: dataOriginalWidth && !isNaN(+dataOriginalWidth) ? +dataOriginalWidth : null,
-            originalHeight: dataOriginalHeight && !isNaN(+dataOriginalHeight) ? +dataOriginalHeight : null,
-            // Only enable caption if we have actual text
             caption: captionText ? captionText : false,
           };
         },
@@ -93,19 +77,11 @@ export const ImageExtension = Image.extend({
           if (typeof dom === 'string') return {};
           const element = dom as HTMLImageElement;
           const width = element.getAttribute('width');
-          const height = element.getAttribute('height');
-          const dataMediaId = element.getAttribute('data-media-id');
-          const dataOriginalWidth = element.getAttribute('data-original-width');
-          const dataOriginalHeight = element.getAttribute('data-original-height');
 
           return {
             src: element.getAttribute('src'),
             alt: element.getAttribute('alt'),
             pixelWidth: width && !isNaN(+width) ? +width : null,
-            pixelHeight: height && !isNaN(+height) ? +height : null,
-            media_id: dataMediaId || null,
-            originalWidth: dataOriginalWidth && !isNaN(+dataOriginalWidth) ? +dataOriginalWidth : null,
-            originalHeight: dataOriginalHeight && !isNaN(+dataOriginalHeight) ? +dataOriginalHeight : null,
             caption: false,
           };
         },
@@ -123,15 +99,15 @@ export const ImageExtension = Image.extend({
       href,
       caption,
       align,
+      useResponsive,
+      maxWidth,
+      objectFit,
+      mobileWidth,
+      mobileMaxWidth,
       ...imgAttrs
     } = HTMLAttributes;
 
     if (pixelWidth) imgAttrs.width = pixelWidth;
-    if (pixelHeight) imgAttrs.height = pixelHeight;
-
-    if (media_id) imgAttrs['data-media-id'] = media_id;
-    if (originalWidth) imgAttrs['data-original-width'] = originalWidth;
-    if (originalHeight) imgAttrs['data-original-height'] = originalHeight;
 
     // Determine valid CSS width for figure
     let cssWidth = '100%';
@@ -142,8 +118,6 @@ export const ImageExtension = Image.extend({
     const hasCaption = caption !== false && caption !== null && caption !== undefined;
 
     // Apply alignment style
-    // If we have a caption, we apply alignment to the FIGURE wrapper.
-    // If no caption, we apply it to the IMG.
     const alignStyles = align ? `float:${align};margin:${align === 'center' ? '0 auto' : '0'};display:${align === 'center' ? 'block' : 'inline-block'};` : '';
 
     if (!hasCaption && align) {
@@ -152,7 +126,6 @@ export const ImageExtension = Image.extend({
 
     // When inside a figure, ensure image is block to avoid inline gaps
     if (hasCaption) {
-      // Ensure image doesn't overflow figure and scales down if needed
       imgAttrs.style = `${imgAttrs.style || ''}display:block;max-width:100%;height:auto;`;
     }
 
@@ -186,9 +159,7 @@ const ImageWrapper = styled(NodeViewWrapper) <{ $align?: string }>`
   display: flex;
   width: 100%;
   margin: 0;
-  cursor: text; /* Suggests text selection is possible here */
-
-  /* Handle Alignment via Flex */
+  cursor: default;
   justify-content: ${props => {
     switch (props.$align) {
       case "left": return "flex-start";
@@ -203,31 +174,18 @@ const ImageContainer = styled.div<{
   $selected?: boolean;
   $width?: string;
   $maxWidth?: string;
-  $mobileWidth?: string;
-  $mobileMaxWidth?: string;
-  $useResponsive?: boolean;
 }>`
   position: relative;
   display: flex;
   flex-direction: column;
-  /* overflow: hidden; Removed to prevent clipping of toolbar on small images */
   border: 2px solid transparent;
-  
-  /* Sizing Logic moved here */
   width: ${props => props.$width || "90%"};
   max-width: ${props => props.$maxWidth || "100%"};
 
   ${props => props.$selected && `
     border-color: ${props.theme.colors.primary500};
-    z-index: 100;
+    z-index: 10;
   `}
-
-  @media (max-width: 768px) {
-    ${props => props.$useResponsive && `
-      width: ${props.$mobileWidth || "100%"} !important;
-      max-width: ${props.$mobileMaxWidth || "100%"} !important;
-    `}
-  }
 `;
 
 const StyledImage = styled.img<{ $aspectRatio?: string }>`
@@ -238,50 +196,99 @@ const StyledImage = styled.img<{ $aspectRatio?: string }>`
   ${props => props.$aspectRatio && `aspect-ratio: ${props.$aspectRatio};`}
 `;
 
-const ImageControls = styled.div`
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  /* right: 8px; Removed */
+// Caption Styles
+const CaptionWrapper = styled.div`
+  width: 100%;
+  margin-top: 8px;
+  border-left: 2px solid ${props => props.theme.colors.danger600};
+  padding-left: 10px; 
   display: flex;
-  align-items: center;
-  gap: 4px;
-  background-color: ${props => props.theme.colors.neutral0};
-  border: 1px solid ${props => props.theme.colors.neutral200};
-  padding: 4px;
-  border-radius: 4px; /* Added border-radius */
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  z-index: 50;
-  white-space: nowrap;
 `;
 
-const ControlButton = styled(Button)`
-  height: 28px;
-  padding: 0 8px;
-  transition: background-color 0.2s;
-
-  &:hover {
-    background-color: ${props => props.theme.colors.primary100} !important;
-  }
-
-  &[data-active="true"] {
-    background-color: ${props => props.theme.colors.primary100};
-    color: ${props => props.theme.colors.primary600};
-    border-color: ${props => props.theme.colors.primary500};
-  }
+const CaptionInput = styled(TextareaAutosize)`
+  flex: 1;
+  text-align: left;
+  font-style: italic;
+  color: #666;
+  font-size: 14px;
+  border: none;
+  background: transparent;
+  resize: none;
+  outline: none;
+  font-family: inherit;
+  padding: 0; 
+  line-height: 1.5;
   
-  svg {
-    width: 18px;
-    height: 18px;
+  &::placeholder {
+      color: #999;
   }
 `;
 
-const ControlSeparator = styled.div`
-  width: 1px;
-  height: 16px;
-  background-color: ${props => props.theme.colors.neutral200};
-  margin: 0 2px;
+
+// Handles
+const BaseHandle = styled.div`
+  position: absolute;
+  z-index: 60;
+  background: transparent; /* Hit area transparent */
+  
+  &::after {
+    content: "";
+    background-color: ${props => props.theme.colors.primary500};
+    border-radius: 4px;
+    box-shadow: 0 0 4px rgba(0,0,0,0.2);
+    position: absolute;
+    /* Center the visible handle in the hit area */
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
 `;
+
+// Vertical Handles (Left/Right)
+const VerticalHandle = styled(BaseHandle)`
+  top: 0;
+  bottom: 0;
+  width: 12px;
+  cursor: col-resize;
+
+  &::after {
+    width: 4px;
+    height: 48px;
+    max-height: 60%;
+  }
+`;
+
+const ResizeHandleLeft = styled(VerticalHandle)`
+  left: 0;
+`;
+
+const ResizeHandleRight = styled(VerticalHandle)`
+  right: 0;
+`;
+
+// Horizontal Handles (Top/Bottom)
+const HorizontalHandle = styled(BaseHandle)`
+  left: 0;
+  right: 0;
+  height: 12px;
+  cursor: row-resize;
+  
+  &::after {
+     height: 4px;
+     width: 48px;
+     max-width: 60%;
+  }
+`;
+
+const ResizeHandleTop = styled(HorizontalHandle)`
+    top: 0;
+`;
+
+const ResizeHandleBottom = styled(HorizontalHandle)`
+    bottom: 0;
+`;
+
+
 
 // === HELPER ===
 const normalizeImageAttributes = (attrs: any) => {
@@ -292,64 +299,28 @@ const normalizeImageAttributes = (attrs: any) => {
     normalized.align = "left"; // Default Left
     normalized.maxWidth = "100%";
     normalized.objectFit = "contain";
-    normalized.mobileWidth = "100%";
-    normalized.mobileMaxWidth = "100%";
     normalized.useResponsive = false;
-  }
-
-  if (attrs.pixelWidth && !attrs.originalWidth) {
-    normalized.originalWidth = attrs.pixelWidth;
-  }
-  if (attrs.pixelHeight && !attrs.originalHeight) {
-    normalized.originalHeight = attrs.pixelHeight;
   }
 
   return normalized;
 };
 
-// === KOMPONEN UTAMA ===
+// === COMPONENT ===
 export function TiptapImageComponent(props: NodeViewProps) {
-  const { node, editor, selected, deleteNode, updateAttributes } = props;
+  const { node, editor, selected, updateAttributes, extension } = props;
   const imageRef = useRef<HTMLImageElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const toolbarRef = useRef<HTMLDivElement | null>(null);
-  const inputRef = useRef<HTMLInputElement | null>(null);
-  const [mediaLibOpen, setMediaLibOpen] = useState(false);
+  const [resizing, setResizing] = useState(false);
+  const [currentWidth, setCurrentWidth] = useState<string>('auto');
 
-  // Removed unused focus state logic
-
-  // Click Outside to Deselect
-  useEffect(() => {
-    const handleClickStrays = (e: MouseEvent) => {
-      if (!selected) return;
-      if (!editor) return;
-
-      const target = e.target as Node;
-
-      // If clicking inside the image container -> do nothing (Tiptap handles selection)
-      if (containerRef.current && containerRef.current.contains(target)) return;
-
-      // If clicking inside the toolbar -> do nothing
-      if (toolbarRef.current && toolbarRef.current.contains(target)) return;
-
-      const editorDom = editor.view.dom;
-      if (!editorDom.contains(target) && !toolbarRef.current?.contains(target)) {
-        // Explicitly blur the editor to remove selection visual state
-        if (editor.view.dom instanceof HTMLElement) {
-          editor.view.dom.blur();
-        } else if ((editor.view.dom as any).blur) {
-          (editor.view.dom as any).blur();
-        }
-      }
-    };
-
-    window.addEventListener('mousedown', handleClickStrays);
-    return () => window.removeEventListener('mousedown', handleClickStrays);
-  }, [selected, editor]);
-
-  // Editing Modes
-  const [editingMode, setEditingMode] = useState<'none' | 'alt' | 'link' | 'caption'>('none');
-  const [tempValue, setTempValue] = useState("");
+  // Conf
+  const resizeOptions: ResizeConfig = extension.options.resize || {
+    enabled: true,
+    directions: ['left', 'right'],
+    minWidth: 50,
+    minHeight: 50,
+    alwaysPreserveAspectRatio: true,
+  };
 
   // Normalize attrs
   useEffect(() => {
@@ -358,288 +329,162 @@ export function TiptapImageComponent(props: NodeViewProps) {
     if (needsUpdate) updateAttributes(normalizedAttrs);
   }, [node.attrs, updateAttributes]);
 
-  // Sync temp value based on mode
-  useEffect(() => {
-    if (editingMode === 'alt') setTempValue(node.attrs.alt || "");
-    if (editingMode === 'link') setTempValue(node.attrs.href || "");
-    if (editingMode === 'caption') setTempValue(node.attrs.caption || "");
 
-    // Manual Focus with preventScroll to avoid jitter
-    if (editingMode === 'link' || editingMode === 'alt') {
-      setTimeout(() => {
-        inputRef.current?.focus({ preventScroll: true });
-      }, 10);
-    }
-  }, [editingMode, node.attrs.alt, node.attrs.href, node.attrs.caption]);
-
-  // Handle media select
-  const handleMediaSelect = (file: MediaFile) => {
-    let srcset = undefined;
-    if (file.formats) {
-      const sets = Object.keys(file.formats)
-        .sort((a, b) => file.formats[a].width - file.formats[b].width)
-        .map(k => {
-          const f = file.formats[k];
-          const url = f.url.startsWith('http') ? f.url : `${window.strapi?.backendURL}${f.url}`;
-          return `${url} ${f.width}w`;
-        });
-      srcset = sets.join(', ');
-    }
-
-    const fullUrl = file.url.startsWith('http') ? file.url : `${window.strapi?.backendURL}${file.url}`;
-    updateAttributes({
-      src: fullUrl,
-      alt: file.alt,
-      title: file.name,
-      pixelWidth: file.width,
-      pixelHeight: file.height,
-      width: "auto",
-      originalWidth: file.width,
-      originalHeight: file.height,
-      media_id: file.id,
-      aspectRatio: file.width && file.height ? `${file.width}/${file.height}` : null,
-      srcset,
-    });
-  };
-
-  const toggleResponsive = () => updateAttributes({ useResponsive: !node.attrs.useResponsive });
-
-  // Display width
-  const getDisplayWidth = () => {
+  // Display width calculation
+  const getDisplayWidth = useCallback(() => {
+    if (resizing) return currentWidth;
     if (!node.attrs.useResponsive && node.attrs.pixelWidth) {
       return `${node.attrs.pixelWidth}px`;
     }
     if (typeof node.attrs.width === 'string') return node.attrs.width;
     return 'auto';
-  };
+  }, [node.attrs.useResponsive, node.attrs.pixelWidth, node.attrs.width, resizing, currentWidth]);
 
-  const saveValue = () => {
-    if (editingMode === 'alt') updateAttributes({ alt: tempValue });
-    if (editingMode === 'link') updateAttributes({ href: tempValue });
-    if (editingMode === 'caption') updateAttributes({ caption: tempValue });
-    setEditingMode('none');
-  };
 
-  const deleteValueAttributes = () => {
-    if (editingMode === 'link') updateAttributes({ href: null });
-    if (editingMode === 'caption') updateAttributes({ caption: false });
-    setEditingMode('none');
-  };
+  // Resize Logic
+  const handleMouseDown = useCallback((e: React.MouseEvent, direction: 'left' | 'right' | 'top' | 'bottom') => {
+    e.preventDefault();
+    e.stopPropagation();
 
-  const { width, align, mobileWidth, useResponsive } = node.attrs;
+    if (!containerRef.current || !resizeOptions.enabled) return;
+
+    // Initial dimensions
+    const startWidth = containerRef.current.clientWidth;
+    const startHeight = containerRef.current.clientHeight;
+    const aspectRatio = startWidth / startHeight;
+
+    const startX = e.clientX;
+    const startY = e.clientY;
+
+    setResizing(true);
+    setCurrentWidth(`${startWidth}px`);
+
+    const onMouseMove = (moveEvent: MouseEvent) => {
+      const currentX = moveEvent.clientX;
+      const currentY = moveEvent.clientY;
+
+      const diffX = currentX - startX;
+      const diffY = currentY - startY;
+
+      let newWidth = startWidth;
+
+      // Calculate new width based on direction
+      // If Top/Bottom is used, we scale width based on height change to keep Aspect Ratio (since alwaysPreserveAspectRatio=true here implies we drive width)
+      // Actually strictly speaking user said "alwaysPreserveAspectRatio: true", so changing Height means changing Width.
+
+      if (direction === 'right') {
+        newWidth = startWidth + diffX;
+      } else if (direction === 'left') {
+        newWidth = startWidth - diffX;
+      } else if (direction === 'bottom') {
+        // Dragging down increases height -> increases width
+        const newHeight = startHeight + diffY;
+        newWidth = newHeight * aspectRatio;
+      } else if (direction === 'top') {
+        // Dragging up increases height -> increases width
+        const newHeight = startHeight - diffY;
+        newWidth = newHeight * aspectRatio;
+      }
+
+      // Constraints
+      newWidth = Math.max(resizeOptions.minWidth, newWidth);
+
+      // Also check minHeight constraint (approx)
+      if (newWidth / aspectRatio < resizeOptions.minHeight) {
+        newWidth = resizeOptions.minHeight * aspectRatio;
+      }
+
+      setCurrentWidth(`${newWidth}px`);
+    };
+
+    const onMouseUp = (upEvent: MouseEvent) => {
+      // ... (Similar logic to calculate final for safe measure or just take current)
+      // Ideally we should recalculate using exact same logic to be pure
+      // But for this simple implementation, let's just use the last scheduled update or re-run
+      // Let's re-run logic:
+      const currentX = upEvent.clientX;
+      const currentY = upEvent.clientY;
+      const diffX = currentX - startX;
+      const diffY = currentY - startY;
+
+      let finalWidth = startWidth;
+
+      if (direction === 'right') {
+        finalWidth = startWidth + diffX;
+      } else if (direction === 'left') {
+        finalWidth = startWidth - diffX;
+      } else if (direction === 'bottom') {
+        const newHeight = startHeight + diffY;
+        finalWidth = newHeight * aspectRatio;
+      } else if (direction === 'top') {
+        const newHeight = startHeight - diffY;
+        finalWidth = newHeight * aspectRatio;
+      }
+
+      finalWidth = Math.max(resizeOptions.minWidth, finalWidth);
+      if (finalWidth / aspectRatio < resizeOptions.minHeight) {
+        finalWidth = resizeOptions.minHeight * aspectRatio;
+      }
+
+      updateAttributes({
+        width: `${finalWidth}px`,
+        pixelWidth: finalWidth,
+        useResponsive: false,
+      });
+
+      setResizing(false);
+
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  }, [updateAttributes, resizeOptions]);
+
+
+  const { align } = node.attrs;
 
   return (
-    <>
-      <ImageWrapper
-        $align={align}
+    <ImageWrapper $align={align}>
+      <ImageContainer
+        ref={containerRef}
+        $objectFit={node.attrs.objectFit}
+        $selected={selected || resizing}
+        $width={getDisplayWidth()}
+        $maxWidth={node.attrs.maxWidth}
       >
-        <ImageContainer
-          ref={containerRef}
-          $objectFit={node.attrs.objectFit}
-          $selected={selected}
-          $width={getDisplayWidth()}
-          $maxWidth={node.attrs.maxWidth}
-          $mobileWidth={mobileWidth}
-          $mobileMaxWidth={node.attrs.mobileMaxWidth}
-          $useResponsive={useResponsive}
-        >
-          <StyledImage
-            ref={imageRef}
-            src={node.attrs.src}
-            alt={node.attrs.alt}
-            title={node.attrs.title}
-            $aspectRatio={node.attrs.aspectRatio}
-          />
+        <StyledImage
+          ref={imageRef}
+          src={node.attrs.src}
+          alt={node.attrs.alt}
+          title={node.attrs.title}
+          $aspectRatio={node.attrs.aspectRatio}
+        />
 
-          {/* Caption Display */}
-          {node.attrs.caption !== false && node.attrs.caption !== null && (
-            <figcaption style={{
-              width: '100%',
-              marginTop: '8px',
-              borderLeft: '2px solid red',
-              paddingLeft: '10px',
-              textAlign: 'left'
-            }}>
-              <input
-                className="caption-input"
-                placeholder="Write a caption..."
-                value={typeof node.attrs.caption === 'string' ? node.attrs.caption : ''}
-                onChange={(e) => updateAttributes({ caption: e.target.value })}
-                onMouseDown={(e) => e.stopPropagation()}
-                onMouseUp={(e) => e.stopPropagation()}
-                onClick={(e) => e.stopPropagation()}
-                style={{
-                  width: '100%',
-                  border: 'none',
-                  background: 'transparent',
-                  textAlign: 'left',
-                  fontSize: '14px',
-                  color: '#666',
-                  outline: 'none',
-                  fontStyle: 'italic'
-                }}
-              />
-            </figcaption>
-          )}
-
-          {/* Static Toolbar (Top-Right) */}
-          {selected && (
-            <ImageControls
+        {node.attrs.caption !== false && node.attrs.caption !== null && (
+          <CaptionWrapper>
+            <CaptionInput
+              minRows={1}
+              value={node.attrs.caption || ''}
+              placeholder="Write a caption..."
+              onChange={(e) => updateAttributes({ caption: e.target.value })}
+              onMouseDown={(e) => e.stopPropagation()}
               onClick={(e) => e.stopPropagation()}
-              onMouseUp={(e) => e.stopPropagation()}
-              onMouseDown={(e) => {
-                const target = e.target as HTMLElement;
-                // Allow interactions with Input, Button, within the toolbar: Stop propagation to prevent Tiptap theft
-                // Only prevent default if clicking the container background to avoid blur
-                if (['INPUT', 'BUTTON', 'SVG', 'path'].includes(target.tagName) || target.closest('button')) {
-                  e.stopPropagation();
-                } else {
-                  e.preventDefault();
-                }
-              }}
-            >
-              {editingMode !== 'none' ? (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 4, padding: 4 }}>
-                  <span style={{ fontSize: '12px', fontWeight: 600, color: '#333' }}>
-                    {editingMode === 'link' ? "Link" : "Alt Text"}
-                  </span>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                    <Input
-                      ref={inputRef}
-                      placeholder={editingMode === 'link' ? "Paste link..." : "Alt text"}
-                      value={tempValue}
-                      onChange={(e) => setTempValue(e.target.value)}
-                      style={{ height: '28px', width: '200px', fontSize: '13px' }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') saveValue();
-                        if (e.key === 'Escape') setEditingMode('none');
-                      }}
-                    />
-                    <ControlButton variant="ghost" size="sm" onClick={saveValue}>
-                      <Save className="text-primary-600" />
-                    </ControlButton>
-                    {/* Show Delete only if value exists */}
-                    {((editingMode === 'link' && node.attrs.href) || (editingMode === 'caption' && node.attrs.caption)) && (
-                      <ControlButton variant="ghost" size="sm" onClick={deleteValueAttributes}>
-                        <Trash className="text-danger-600" />
-                      </ControlButton>
-                    )}
-                    <ControlButton variant="ghost" size="sm" onClick={() => setEditingMode('none')}>
-                      <X className="text-neutral-500" />
-                    </ControlButton>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <ControlButton variant="ghost" size="sm" style={{ gap: 4 }}>
-                        <ImageUpscaleIcon />
-                        <span style={{ fontSize: '12px', fontWeight: 600 }}>
-                          {useResponsive ? width : (width === 'auto' ? 'Original' : width)}
-                        </span>
-                      </ControlButton>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start">
-                      <DropdownMenuItem onClick={() => updateAttributes({ width: 'auto', useResponsive: false })}>
-                        Original
-                        {!useResponsive && width === 'auto' && <Check className="ml-auto h-4 w-4" />}
-                      </DropdownMenuItem>
-                      <ControlSeparator style={{ margin: '4px 0', width: '100%', height: '1px' }} />
-                      {[
-                        { label: "50% page width", value: "50%" },
-                        { label: "75% page width", value: "75%" },
-                        { label: "100% page width", value: "100%" },
-                      ].map(preset => (
-                        <DropdownMenuItem
-                          key={preset.value}
-                          onClick={() => updateAttributes({ width: preset.value, useResponsive: true })}
-                        >
-                          {preset.label}
-                          {useResponsive && width === preset.value && <Check className="ml-auto h-4 w-4" />}
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+            />
+          </CaptionWrapper>
+        )}
 
-                  <ControlSeparator />
+        {(selected || resizing) && resizeOptions.enabled && (
+          <>
+            {resizeOptions.directions.includes('left') && <ResizeHandleLeft onMouseDown={(e) => handleMouseDown(e, 'left')} />}
+            {resizeOptions.directions.includes('right') && <ResizeHandleRight onMouseDown={(e) => handleMouseDown(e, 'right')} />}
+            {resizeOptions.directions.includes('top') && <ResizeHandleTop onMouseDown={(e) => handleMouseDown(e, 'top')} />}
+            {resizeOptions.directions.includes('bottom') && <ResizeHandleBottom onMouseDown={(e) => handleMouseDown(e, 'bottom')} />}
+          </>
+        )}
 
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <ControlButton variant="ghost" size="sm">
-                        {align === 'left' && <AlignLeft />}
-                        {align === 'center' && <AlignCenter />}
-                        {align === 'right' && <AlignRight />}
-                      </ControlButton>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start">
-                      <DropdownMenuItem onClick={() => updateAttributes({ align: 'left' })}>
-                        <AlignLeft className="mr-2 h-4 w-4" /> Left
-                        {align === 'left' && <Check className="ml-auto h-4 w-4" />}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => updateAttributes({ align: 'center' })}>
-                        <AlignCenter className="mr-2 h-4 w-4" /> Center
-                        {align === 'center' && <Check className="ml-auto h-4 w-4" />}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => updateAttributes({ align: 'right' })}>
-                        <AlignRight className="mr-2 h-4 w-4" /> Right
-                        {align === 'right' && <Check className="ml-auto h-4 w-4" />}
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-
-                  <ControlButton
-                    size="sm"
-                    data-active={!!node.attrs.href}
-                    onClick={() => setEditingMode('link')}
-                    title="Link"
-                  >
-                    <LinkIcon className={node.attrs.href ? "text-primary-600" : ""} />
-                  </ControlButton>
-
-                  <ControlButton
-                    size="sm"
-                    data-active={node.attrs.caption !== false && node.attrs.caption !== null}
-                    onClick={() => {
-                      // Toggle Caption: If exists (even empty), remove it. If null, add empty string.
-                      if (node.attrs.caption !== false && node.attrs.caption !== null) {
-                        updateAttributes({ caption: false });
-                      } else {
-                        updateAttributes({ caption: '' });
-                        // Optional: focus logic could go here if we had a ref to the caption input
-                      }
-                    }}
-                    title="Caption"
-                  >
-                    <Captions className={node.attrs.caption !== false && node.attrs.caption !== null ? "text-primary-600" : ""} />
-                  </ControlButton>
-
-                  {/* <ControlButton size="sm" onClick={() => setEditingMode('alt')}>
-                    <span style={{ fontSize: '10px', fontWeight: 600 }}>ALT</span>
-                  </ControlButton> */}
-
-                  <ControlButton size="sm" onClick={() => setMediaLibOpen(true)}>
-                    <Replace />
-                  </ControlButton>
-
-                  <ControlSeparator />
-
-                  <ControlButton size="sm" onClick={deleteNode} className="text-danger-600">
-                    <Trash />
-                  </ControlButton>
-                </>
-              )}
-            </ImageControls>
-          )}
-
-        </ImageContainer>
-      </ImageWrapper >
-
-      <MediaLibraryModal
-        isOpen={mediaLibOpen}
-        onClose={() => setMediaLibOpen(false)}
-        onSelect={handleMediaSelect}
-      />
-    </>
+      </ImageContainer>
+    </ImageWrapper >
   );
 }
