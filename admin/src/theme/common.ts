@@ -3,27 +3,25 @@ import { css } from "styled-components";
 export const common = css`
   ${({ theme }) => css`
     .ProseMirror {
-      display: flex;
-      flex-direction: column;
-      max-width: 100%;
-      padding: 8px 12px;
-      cursor: text;
-      z-index: 0;
-      background-color: var(--tiptap-color-bg);
-      color: var(--tiptap-color-body);
+      /* List styles */
+      /* Heading styles */
+      /* Code and preformatted text styles */
       font-size: ${theme.fontSizes[2]};
-      line-height: 1.7;
-    }
-
-    .ProseMirror > *:first-child {
-      margin-top: 0;
+      line-height: normal;
+      color: var(--tiptap-color-body);
+      background-color: var(--tiptap-color-bg);
+      padding: 8px 12px;
+      
+      /* Ensure text wrapping */
+      white-space: pre-wrap;
+      overflow-wrap: break-word;
     }
 
     .ProseMirror.ProseMirror-focused {
       outline: none;
       box-shadow: 0 0 0 1px var(--tiptap-color-ring);
     }
-
+    
     /* Placeholder */
     .ProseMirror p.is-editor-empty:first-child::before {
       content: attr(data-placeholder);
@@ -33,57 +31,21 @@ export const common = css`
       pointer-events: none;
     }
 
-    /* Headings */
-    .ProseMirror h1,
-    .ProseMirror h2,
-    .ProseMirror h3,
-    .ProseMirror h4,
-    .ProseMirror h5,
-    .ProseMirror h6 {
-      line-height: 1.2;
-      color: var(--tiptap-color-heading);
-      font-weight: 600;
-      margin-top: 1.5em;
-      margin-bottom: 0.5em;
+    .ProseMirror > *:first-child {
+      margin-top: 0;
     }
 
-    /* Dùng rem/em thay vì px để responsive */
-    .ProseMirror h1 { font-size: 2.25em; } /* ~36px */
-    .ProseMirror h2 { font-size: 1.75em; } /* ~28px */
-    .ProseMirror h3 { font-size: 1.5em; }  /* ~24px */
-    .ProseMirror h4 { font-size: 1.25em; } /* ~20px */
-    .ProseMirror h5 { font-size: 1em; }    /* ~16px */
-    .ProseMirror h6 { font-size: 0.875em; } /* ~14px */
-
-    /* Blockquote */
-    .ProseMirror blockquote {
-      border-left: 3px solid var(--tiptap-color-border);
-      color: var(--tiptap-color-muted);
-      padding-left: 1rem;
-      margin: 1rem 0;
-      font-style: italic;
-    }
-
-    /* Inline code & pre */
-    .ProseMirror code {
-      background-color: var(--tiptap-color-code-bg);
-      padding: 0.15em 0.3em;
-      font-size: 0.9em;
-      font-family: monospace;
-    }
-
-    .ProseMirror pre {
-      background-color: var(--tiptap-color-code-bg);
-      padding: 1rem;
-      overflow-x: auto;
-      font-family: monospace;
-    }
-
-    /* Lists */
+    /* --- LISTS --- */
     .ProseMirror ul,
     .ProseMirror ol {
-      margin: 1rem 0 1rem 1.5rem;
-      padding-left: 1.25rem;
+      padding: 0 1rem;
+      margin: 1.25rem 1rem 1.25rem 0.4rem;
+    }
+
+    .ProseMirror ul li p,
+    .ProseMirror ol li p {
+      margin-top: 0.25em;
+      margin-bottom: 0.25em;
     }
 
     .ProseMirror ul {
@@ -93,7 +55,7 @@ export const common = css`
     .ProseMirror ol {
       list-style-type: decimal;
     }
-
+    
     .ProseMirror ul ul {
       list-style-type: circle;
       margin-left: 1.25rem;
@@ -104,98 +66,229 @@ export const common = css`
       margin-left: 1.25rem;
     }
 
-    .ProseMirror ul[data-type="taskList"] {
-      list-style-type: none;
+    /* Task Lists */
+    .ProseMirror ul[data-type='taskList'] {
+      list-style: none;
       margin-left: 0;
-      padding: 0
+      padding: 0;
     }
 
-    .ProseMirror ul[data-type="taskList"] li {
+    .ProseMirror ul[data-type='taskList'] li {
+      align-items: center;
       display: flex;
-      align-items: flex-start; 
     }
 
-    .ProseMirror ul[data-type="taskList"] li label {
+    .ProseMirror ul[data-type='taskList'] li > label {
       flex: 0 0 auto;
       margin-right: 0.5rem;
       user-select: none;
     }
 
-    .ProseMirror ul[data-type="taskList"] li div {
+    .ProseMirror ul[data-type='taskList'] li > div {
       flex: 1 1 auto;
     }
 
-    .ProseMirror ul[data-type="taskList"] input[type="checkbox"] {
-      cursor: pointer;
+    .ProseMirror ul[data-type='taskList'] input[type='checkbox'] {
+      cursor: default;
+      pointer-events: none;
     }
 
-    .ProseMirror ul[data-type="taskList"] ul {
-      margin: 0;
+    /* --- HEADINGS --- */
+    .ProseMirror h1,
+    .ProseMirror h2,
+    .ProseMirror h3,
+    .ProseMirror h4,
+    .ProseMirror h5,
+    .ProseMirror h6 {
+      line-height: 1.1;
+      text-wrap: pretty;
+      color: var(--tiptap-color-heading);
     }
 
-    .ProseMirror ul[data-type="taskList"] li div p:first-child {
-      margin: 0;
+    .ProseMirror h1 {
+      font-size: calc(${theme.fontSizes[2]} * 2.25);
+      font-weight: 800;
+      margin-top: 2em;
+      margin-bottom: 0.5em;
     }
 
-    .ProseMirror li {
-      margin: 0.25rem 0;
+    .ProseMirror h2 {
+      font-size: calc(${theme.fontSizes[2]} * 1.5);
+      font-weight: 700;
+      margin-top: 1.5em;
+      margin-bottom: 0.5em;
+      line-height: 1.35;
     }
 
-    /* Horizontal rule */
+    .ProseMirror h3 {
+      font-size: calc(${theme.fontSizes[2]} * 1.25);
+      font-weight: 600;
+      margin-top: 1.5em;
+      margin-bottom: 0.4em;
+      line-height: 1.6;
+    }
+
+    .ProseMirror h4 {
+      font-size: calc(${theme.fontSizes[2]} * 1.125);
+      font-weight: 600;
+      margin-top: 1.5em;
+      margin-bottom: 0.5em;
+      line-height: 1.4;
+    }
+
+    .ProseMirror h5 {
+      font-size: calc(${theme.fontSizes[2]} * 1);
+      font-weight: 600;
+      margin-top: 1.25em;
+      margin-bottom: 0.5em;
+      line-height: 1.5;
+    }
+
+    .ProseMirror h6 {
+      font-size: calc(${theme.fontSizes[2]} * 0.875);
+      font-weight: 600;
+      margin-top: 1.25em;
+      margin-bottom: 0.5em;
+      line-height: 1.5;
+    }
+
+    /* --- PARAGRAPHS & ADJACENCY --- */
+    .ProseMirror p {
+      margin-top: 0.85em;
+      margin-bottom: 0.85em;
+      line-height: 1.6;
+    }
+
+    /* Remove top margin of paragraph/list if it follows a heading immediately */
+    .ProseMirror h1 + p,
+    .ProseMirror h1 + ul,
+    .ProseMirror h1 + ol,
+    .ProseMirror h2 + p,
+    .ProseMirror h2 + ul,
+    .ProseMirror h2 + ol,
+    .ProseMirror h3 + p,
+    .ProseMirror h3 + ul,
+    .ProseMirror h3 + ol,
+    .ProseMirror h4 + p,
+    .ProseMirror h4 + ul,
+    .ProseMirror h4 + ol {
+      margin-top: 0 !important;
+    }
+
+    /* --- CODE BLOCK --- */
+    .ProseMirror code {
+      background-color: var(--tiptap-color-code-bg);
+      border-radius: 0.4rem;
+      color: var(--tiptap-color-heading); /* Using heading color (neutral900) for contrast */
+      font-size: 0.85rem;
+      padding: 0.25em 0.3em;
+      font-family: monospace;
+    }
+
+    .ProseMirror pre {
+      background: #0d1117; /* GitHub Dark bg */
+      border-radius: 0.5rem;
+      color: #fff;
+      font-family: 'JetBrains Mono', monospace;
+      margin: 1.5rem 0;
+      padding: 0.75rem 1rem;
+      overflow-x: auto;
+    }
+
+    .ProseMirror pre code {
+      background: none;
+      color: inherit;
+      font-size: 0.8rem;
+      padding: 0;
+    }
+
+    /* --- QUOTES --- */
+    .ProseMirror blockquote {
+      font-weight: 500;
+      font-style: italic;
+      color: var(--tiptap-color-body);
+      border-left: 0.25rem solid var(--tiptap-color-border);
+      margin: 1.6em 0;
+      padding-left: 1em;
+      quotes: "\\201C" "\\201D" "\\2018" "\\2019";
+    }
+
     .ProseMirror hr {
       border: none;
       border-top: 1px solid var(--tiptap-color-border);
       margin: 2rem 0;
     }
 
-    /* Links */
-    .ProseMirror a {
-      color: var(--tiptap-color-primary);
-      text-decoration: underline;
-    }
-
-    /* Images & figures */
+    /* --- IMAGES & IFRAMES --- */
     .ProseMirror img {
+      display: block;
+      height: auto;
       max-width: 100%;
     }
 
-    .ProseMirror figure {
-      margin: 1.5rem 0;
-    }
-
-    .ProseMirror figcaption {
-      font-size: 0.875rem;
-      color: var(--tiptap-color-muted);
-      margin-top: 0.25rem;
-      text-align: center;
-    }
-
-    /* Tables */
-    .ProseMirror table {
+    .ProseMirror iframe {
       width: 100%;
-      border-collapse: collapse;
-      margin: 1.5rem 0;
-      font-size: 0.95rem;
+      aspect-ratio: 16 / 9;
+      border-radius: 0.5rem;
+      margin-top: 1.5rem;
+      margin-bottom: 1.5rem;
     }
 
-    .ProseMirror table th,
-    .ProseMirror table td {
-      border: 1px solid var(--tiptap-color-border);
-      padding: 0.5rem 0.75rem;
+    /* Caption for Images */
+    .ProseMirror figcaption {
       text-align: left;
+      font-style: italic;
+      font-size: 0.9em;
+      color: var(--tiptap-color-muted);
+      margin-top: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* --- LINKS --- */
+    .ProseMirror a {
+      color: var(--tiptap-color-primary);
+      text-decoration: underline;
+      font-weight: 500;
+    }
+
+    .ProseMirror strong {
+      font-weight: 700;
+      color: var(--tiptap-color-heading);
+    }
+
+    /* --- TABLES --- */
+    .ProseMirror table {
+      border-collapse: collapse;
+      margin: 0;
+      overflow: hidden;
+      table-layout: fixed;
+      width: 100%;
+    }
+
+    .ProseMirror table td,
+    .ProseMirror table th {
+      border: 1px solid var(--tiptap-color-border);
+      box-sizing: border-box;
+      min-width: 1em;
+      padding: 6px 8px;
+      position: relative;
+      vertical-align: top;
+    }
+
+    .ProseMirror table td > *,
+    .ProseMirror table th > * {
+      margin-bottom: 0;
     }
 
     .ProseMirror table th {
-      background-color: var(--tiptap-color-muted-bg);
-      font-weight: 600;
+      background-color: var(--tiptap-color-code-bg); /* Using code-bg for slight contrast header */
+      font-weight: bold;
+      text-align: left;
     }
 
-    .ProseMirror table tr:nth-child(even) {
-      background-color: var(--tiptap-color-bg-alt);
-    }
-
-    .ProseMirror table tr:hover {
-      background-color: var(--tiptap-color-hover-bg);
+    .ProseMirror .tableWrapper {
+      margin: 1.5rem 0;
+      overflow-x: auto;
     }
   `}
 `;
