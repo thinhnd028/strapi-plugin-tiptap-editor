@@ -59,6 +59,11 @@ const ToolbarDefinitions = {
       default: mod.HorizontalRuleToolbar,
     }))
   ),
+  hardBreak: lazy(() =>
+    import("../toolbars/HardBreak").then((mod) => ({
+      default: mod.HardBreakToolbar,
+    }))
+  ),
   color: lazy(() =>
     import("../toolbars/ColorAndHighlight").then((mod) => ({
       default: mod.ColorAndHighlightToolbar,

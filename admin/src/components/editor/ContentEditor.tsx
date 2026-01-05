@@ -45,6 +45,7 @@ function ContentEditor({
         "alignment",
         "lists",
         "horizontalRule",
+        "hardBreak",
         "Separator",
         "table",
         "image",
