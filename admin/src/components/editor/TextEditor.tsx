@@ -6,6 +6,8 @@ import TaskList from '@tiptap/extension-task-list'
 import Emoji, { gitHubEmojis } from '@tiptap/extension-emoji'
 import Underline from '@tiptap/extension-underline'
 
+import { Link } from "./extensions/link";
+
 import {
     ToolbarButtons,
     type ToolbarButtonsType,
@@ -23,6 +25,7 @@ function TextEditor({ toolbars, ...restProps }: TextEditorProps) {
         <BaseEditor
             ref={editorRef}
             extensions={[
+                Link,
                 TaskList,
                 TaskItem.configure({
                     nested: true,
