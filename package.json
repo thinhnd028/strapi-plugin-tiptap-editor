@@ -1,5 +1,7 @@
 {
+  "name": "@thinhnd028/strapi-plugin-tiptap-editor",
   "version": "0.0.1",
+  "author": "Tai Nguyen",
   "keywords": [],
   "type": "commonjs",
   "exports": {
@@ -100,6 +102,9 @@
     "react-router-dom": "^6.30.1",
     "styled-components": "^6.1.19"
   },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/"
+  },
   "strapi": {
     "kind": "plugin",
     "name": "tiptap-editor",
@@ -109,7 +114,6 @@
       "tiptap"
     ]
   },
-  "name": "@tnd028/strapi-plugin-tiptap-editor",
   "repository": {
     "type": "git",
     "url": "https://github.com/thinhnd028/strapi-plugin-tiptap-editor.git"
