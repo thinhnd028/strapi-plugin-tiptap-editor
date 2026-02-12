@@ -220,10 +220,17 @@ export const common = css`
     }
 
     /* --- IMAGES & IFRAMES --- */
+    .ProseMirror figure {
+      float: none;
+      margin-top: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
     .ProseMirror img {
       display: block;
       height: auto;
       max-width: 100%;
+      float: none;
     }
 
     .ProseMirror iframe {
@@ -231,14 +238,14 @@ export const common = css`
       aspect-ratio: 16 / 9;
     }
 
-    /* Caption for Images */
+    /* Caption for Images - margin on figure, figcaption only spacing from image */
     .ProseMirror figcaption {
       text-align: left;
       font-style: italic;
       font-size: 0.9em;
       color: var(--tiptap-color-muted);
       margin-top: 0.5rem;
-      margin-bottom: 1.5rem;
+      margin-bottom: 0;
     }
 
     /* --- LINKS --- */

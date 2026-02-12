@@ -41,13 +41,34 @@ const CustomComponent = Node.create({
         };
       },
     },
+    {
+      tag: 'div[data-custom-component="true"]',
+      getAttrs(dom: any) {
+        return {
+          type: dom.getAttribute('data-type') || 'unknown',
+        };
+      },
+    },
   ],
 
   parseHTML() {
     return [
       {
-        tag: 'div',
-      }
+        tag: 'div[data-node-type="customComponent"]',
+        getAttrs(dom: any) {
+          return {
+            type: dom.getAttribute('data-component-type'),
+          };
+        },
+      },
+      {
+        tag: 'div[data-custom-component="true"]',
+        getAttrs(dom: any) {
+          return {
+            type: dom.getAttribute('data-type') || 'unknown',
+          };
+        },
+      },
     ];
   },
 

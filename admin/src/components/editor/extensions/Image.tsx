@@ -118,10 +118,11 @@ export const ImageExtension = Image.extend({
     const hasCaption = caption !== false && caption !== null && caption !== undefined;
 
     // Apply alignment style
-    const alignStyles = align ? `float:${align};margin:${align === 'center' ? '0 auto' : '0'};display:${align === 'center' ? 'block' : 'inline-block'};` : '';
+    const alignStyles = align ? `margin-left:${align === 'center' || align === 'right' ? 'auto' : '0'};margin-right:${align === 'center' || align === 'left' ? 'auto' : '0'};display:block;` : '';
 
-    if (!hasCaption && align) {
-      imgAttrs.style = `${imgAttrs.style || ''}${alignStyles}`;
+    if (!hasCaption) {
+      const imgMargin = 'margin-top:1.5rem;margin-bottom:1.5rem;';
+      imgAttrs.style = `${imgAttrs.style || ''}${imgMargin}${align ? alignStyles : ''}`;
     }
 
     // When inside a figure, ensure image is block to avoid inline gaps
@@ -137,7 +138,7 @@ export const ImageExtension = Image.extend({
 
     // Render as <figure> when caption is enabled (string, possibly empty)
     if (hasCaption) {
-      const figureStyle = `width:${cssWidth};max-width:100%;${alignStyles}`;
+      const figureStyle = `width:${cssWidth};max-width:100%;margin-top:1.5rem;margin-bottom:1.5rem;${alignStyles}`;
       return [
         'figure',
         { style: figureStyle, class: `image-style-${align || 'center'}` },
