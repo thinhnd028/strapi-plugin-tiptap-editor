@@ -36,10 +36,15 @@ export const Link = TiptapLink.extend({
     return {
       ...this.parent?.(),
       openOnClick: false,
+      autolink: false,
+      defaultProtocol: "https",
+      enableClickSelection: false,
+      linkOnPaste: true,
+      protocols: [] as (string | import("@tiptap/extension-link").LinkProtocolOptions)[],
       HTMLAttributes: {
         class: "link",
       },
-    };
+    } as import("@tiptap/extension-link").LinkOptions;
   },
 
   addProseMirrorPlugins() {

@@ -32,25 +32,6 @@ const CustomComponent = Node.create({
       custom_attrs: { default: undefined },
     };
   },
-  parseDOM: [
-    {
-      tag: 'div[data-node-type="customComponent"]',
-      getAttrs(dom: any) {
-        return {
-          type: dom.getAttribute('data-component-type'),
-        };
-      },
-    },
-    {
-      tag: 'div[data-custom-component="true"]',
-      getAttrs(dom: any) {
-        return {
-          type: dom.getAttribute('data-type') || 'unknown',
-        };
-      },
-    },
-  ],
-
   parseHTML() {
     return [
       {
@@ -72,20 +53,15 @@ const CustomComponent = Node.create({
     ];
   },
 
-  renderHTML({ HTMLAttributes }) {
+  renderHTML({ HTMLAttributes, node }: { HTMLAttributes: Record<string, unknown>; node?: { attrs?: { type?: string } } }) {
     return [
       'div',
-      { style: 'margin: 1em 0; text-align: center;' }
-    ];
-
-  },
-
-  toDOM(node: any) {
-    return [
-      'div', {
+      {
         'data-custom-component': 'true',
-        'data-type': node.attrs.type || 'unknown',
+        'data-type': node?.attrs?.type || 'unknown',
         class: 'custom-component-nodeview',
+        style: 'margin: 1em 0; text-align: center;',
+        ...HTMLAttributes,
       },
       0,
     ];

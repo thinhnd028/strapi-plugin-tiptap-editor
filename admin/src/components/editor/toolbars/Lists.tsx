@@ -56,25 +56,28 @@ const IconWrapper = styled.div`
 export const ListsToolbar = () => {
     const { editor } = useEditorContext();
 
+    const commands = editor.commands as unknown as { toggleBulletList: () => void; toggleOrderedList: () => void; toggleTaskList?: () => void };
+    const can = editor.can() as unknown as { toggleBulletList: () => boolean; toggleOrderedList: () => boolean; toggleTaskList?: () => boolean };
+
     const items = [
         {
-            action: () => editor.commands.toggleBulletList(),
+            action: () => commands.toggleBulletList(),
             isActive: () => editor.isActive("bulletList"),
-            disabled: !editor.can().toggleBulletList(),
+            disabled: !can.toggleBulletList(),
             title: "Bullet List",
             icon: <List />,
         },
         {
-            action: () => editor.commands.toggleOrderedList(),
+            action: () => commands.toggleOrderedList(),
             isActive: () => editor.isActive("orderedList"),
-            disabled: !editor.can().toggleOrderedList(),
+            disabled: !can.toggleOrderedList(),
             title: "Ordered List",
             icon: <ListOrdered />,
         },
         {
-            action: () => editor.commands.toggleTaskList(),
+            action: () => commands.toggleTaskList?.(),
             isActive: () => editor.isActive("taskList"),
-            disabled: !editor.can().toggleTaskList(),
+            disabled: !can.toggleTaskList?.(),
             title: "Task List",
             icon: <ListTodo />,
         },

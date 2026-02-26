@@ -1,7 +1,7 @@
 import { useRef } from "react";
 
 import { type Editor } from "@tiptap/core";
-import Table from "@tiptap/extension-table";
+import { Table } from "@tiptap/extension-table/table";
 import TableCell from "@tiptap/extension-table-cell";
 import TableHeader from "@tiptap/extension-table-header";
 import TableRow from "@tiptap/extension-table-row";
@@ -58,7 +58,7 @@ function ContentEditor({
     return (
         <BaseEditor
             ref={editorRef}
-            extensions={[
+            extensions={([
                 ...extensions,
                 Link,
                 CustomComponent,
@@ -84,7 +84,7 @@ function ContentEditor({
                 CharacterCount.configure({
                     limit: null,
                 }),
-            ]}
+            ] as any)}
             toolbar={<ToolbarButtons toolbars={toolbars} />}
             {...restProps}
         />

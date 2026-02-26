@@ -1,4 +1,5 @@
-import { BubbleMenu, isNodeSelection } from "@tiptap/react";
+import { BubbleMenu } from "@tiptap/react/menus";
+import { NodeSelection } from "@tiptap/pm/state";
 import { Captions } from "lucide-react";
 import { useCallback, useState } from "react";
 import styled from "styled-components";
@@ -74,7 +75,7 @@ export const ImageBubbleMenu = () => {
 
     // Only show if image is selected
     const shouldShow = useCallback(({ editor }: any) => {
-        return isNodeSelection(editor.state.selection) && editor.isActive('image');
+        return editor.state.selection instanceof NodeSelection && editor.isActive('image');
     }, []);
 
     if (!editor) return null;
@@ -117,11 +118,10 @@ export const ImageBubbleMenu = () => {
             <BubbleMenu
                 editor={editor}
                 shouldShow={shouldShow}
-                tippyOptions={{
+                options={{
                     placement: "bottom",
-                    offset: [0, 10],
-                    zIndex: 99,
-                    interactive: true,
+                    offset: 10,
+                    strategy: "absolute",
                 }}
             >
                 <MenuContainer

@@ -18,10 +18,10 @@ const OrderedListToolbar = forwardRef<HTMLButtonElement, ToolbarButtonProps>(
         aria-label="Insert ordered list"
         isActive={editor?.isActive("orderedList")}
         onClick={(e) => {
-          editor?.chain().focus().toggleOrderedList().run();
+          (editor?.chain().focus() as unknown as { toggleOrderedList: () => { run: () => boolean } })?.toggleOrderedList().run();
           onClick?.(e);
         }}
-        disabled={!editor?.can().chain().focus().toggleOrderedList().run()}
+        disabled={!(editor?.can().chain().focus() as unknown as { toggleOrderedList: () => { run: () => boolean } })?.toggleOrderedList().run()}
         ref={ref}
         {...props}
       >

@@ -46,37 +46,38 @@ export interface UseEditorOptions
   onBlur?: (content: Content) => void;
 }
 
-export const createExtensions = (): Extensions => [
-  Document,
-  Blockquote,
-  Bulletlist,
-  OrderedList,
-  ListItem,
-  CustomHeading.configure({
-    levels: [1, 2, 3, 4, 5, 6],
-  }),
-  Paragraph,
-  HorizontalRule,
-  Text,
-  HardBreak,
-  Bold,
-  Italic,
-  Strike,
-  Dropcursor,
-  Gapcursor,
-  History.configure({
-    depth: 50,
-  }),
-  Highlight.configure({
-    multicolor: true,
-  }),
-  Color,
-  ResetMarksOnEnter,
-  TextAlign.configure({
-    types: ["heading", "paragraph"],
-  }),
-  TextStyle,
-];
+export const createExtensions = (): Extensions =>
+  [
+    Document,
+    Blockquote,
+    Bulletlist,
+    OrderedList,
+    ListItem,
+    CustomHeading.configure({
+      levels: [1, 2, 3, 4, 5, 6],
+    }),
+    Paragraph,
+    HorizontalRule,
+    Text,
+    HardBreak,
+    Bold,
+    Italic,
+    Strike,
+    Dropcursor,
+    Gapcursor,
+    History.configure({
+      depth: 50,
+    }),
+    Highlight.configure({
+      multicolor: true,
+    }),
+    Color,
+    ResetMarksOnEnter,
+    TextAlign.configure({
+      types: ["heading", "paragraph"],
+    }),
+    TextStyle,
+  ] as Extensions;
 
 const getOutput = (
   editor: Editor,
@@ -136,10 +137,10 @@ export const useEditor = ({
   );
 
   const editor = useEditorPrimitive({
-    extensions: [...extensions, ...createExtensions()].filter(
+    extensions: ([...extensions, ...createExtensions()].filter(
       (ext, index, self) =>
         self.findIndex((e) => e.name === ext.name) === index,
-    ),
+    ) as Extensions),
     content,
     immediatelyRender: false,
     editorProps: {

@@ -20,10 +20,10 @@ const BulletListToolbar = forwardRef<HTMLButtonElement, ToolbarButtonProps>(
         aria-label="Insert bullet list"
         isActive={editor?.isActive("bulletList")}
         onClick={(e) => {
-          editor?.chain().focus().toggleBulletList().run();
+          (editor?.chain().focus() as unknown as { toggleBulletList: () => { run: () => boolean } })?.toggleBulletList().run();
           onClick?.(e);
         }}
-        disabled={!editor?.can().chain().focus().toggleBulletList().run()}
+        disabled={!(editor?.can().chain().focus() as unknown as { toggleBulletList: () => { run: () => boolean } })?.toggleBulletList().run()}
         ref={ref}
         {...props}
       >

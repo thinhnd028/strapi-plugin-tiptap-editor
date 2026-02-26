@@ -1,8 +1,8 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import type { EditorState } from "@tiptap/pm/state";
 import type { EditorView } from "@tiptap/pm/view";
 import type { Editor } from "@tiptap/react";
-import { BubbleMenu } from "@tiptap/react";
+import { BubbleMenu } from "@tiptap/react/menus";
 import { useEditorContext } from "../partials/EditorProvider";
 import { LinkEditBlock } from "./LinkEditBlock";
 import { LinkPopoverBlock } from "./LinkPopoverBlock";
@@ -53,6 +53,18 @@ export const LinkBubbleMenu: React.FC<LinkBubbleMenuProps> = () => {
 
     setLinkAttrs({ href, target });
     setSelectedText(text);
+  }, [editor]);
+
+  useEffect(() => {
+    const handler = () => {
+      const { from, to } = editor.state.selection;
+      const { href } = editor.getAttributes("link");
+      if (from === to || !href) setShowEdit(false);
+    };
+    editor.on("selectionUpdate", handler);
+    return () => {
+      editor.off("selectionUpdate", handler);
+    };
   }, [editor]);
 
   const shouldShow = useCallback(
@@ -112,9 +124,8 @@ export const LinkBubbleMenu: React.FC<LinkBubbleMenuProps> = () => {
     <BubbleMenu
       editor={editor}
       shouldShow={shouldShow}
-      tippyOptions={{
+      options={{
         placement: "bottom-start",
-        onHidden: () => setShowEdit(false),
       }}
     >
       {showEdit ? (

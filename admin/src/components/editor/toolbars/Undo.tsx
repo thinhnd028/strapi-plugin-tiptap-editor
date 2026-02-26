@@ -15,8 +15,8 @@ const UndoToolbar = forwardRef<HTMLButtonElement, ToolbarButtonProps>(
 
     return (
       <ToolbarButton
-        onClick={() => editor.chain().focus().undo().run()}
-        disabled={!editor?.can().undo()}
+        onClick={() => (editor.chain().focus() as unknown as { undo: () => { run: () => boolean } }).undo().run()}
+        disabled={!(editor?.can() as unknown as { undo: () => boolean }).undo()}
         tooltip="Undo"
         aria-label="Undo"
         ref={ref}

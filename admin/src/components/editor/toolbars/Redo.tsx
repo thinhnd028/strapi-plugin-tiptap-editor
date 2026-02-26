@@ -18,10 +18,10 @@ const RedoToolbar = forwardRef<HTMLButtonElement, ToolbarButtonProps>(
         tooltip="Redo"
         aria-label="Redo"
         onClick={(e) => {
-          editor?.chain().focus().redo().run();
+          (editor?.chain().focus() as unknown as { redo: () => { run: () => boolean } })?.redo().run();
           onClick?.(e);
         }}
-        disabled={!editor?.can().chain().focus().redo().run()}
+        disabled={!(editor?.can().chain().focus() as unknown as { redo: () => { run: () => boolean } })?.redo().run()}
         ref={ref}
         {...props}
       >

@@ -18,6 +18,8 @@ export const ImageExtension = Image.extend({
   addOptions() {
     return {
       ...this.parent?.(),
+      inline: false,
+      allowBase64: false,
       resize: {
         enabled: true,
         directions: ['left', 'right'], // Default to side handles as before, but user can override
@@ -25,7 +27,7 @@ export const ImageExtension = Image.extend({
         minHeight: 50,
         alwaysPreserveAspectRatio: true,
       } as ResizeConfig,
-    };
+    } as any;
   },
 
   addAttributes() {
