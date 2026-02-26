@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import { ItalicIcon } from "lucide-react";
+import { ItalicIcon } from "../icons";
 import { useEditorContext } from "../partials/EditorProvider";
 import ToolbarButton, { ToolbarButtonProps } from "../partials/ToolbarButton";
 import styled from "styled-components";

@@ -7,8 +7,8 @@ import {
   Rows3,
   Table,
   Table2,
-  Trash2
-} from "lucide-react";
+  Trash2,
+} from "../icons";
 import styled from "styled-components";
 import {
   DropdownMenu,
@@ -73,7 +73,16 @@ export const TableToolbar = () => {
   if (!editor) return null;
 
   const handleAction = (action: string) => {
-    const chain = editor.chain().focus();
+    const chain = editor.chain().focus() as unknown as {
+      insertTable: (opts?: { rows?: number; cols?: number; withHeaderRow?: boolean }) => { run: () => boolean };
+      addRowBefore: () => { run: () => boolean };
+      addRowAfter: () => { run: () => boolean };
+      addColumnBefore: () => { run: () => boolean };
+      addColumnAfter: () => { run: () => boolean };
+      deleteRow: () => { run: () => boolean };
+      deleteColumn: () => { run: () => boolean };
+      deleteTable: () => { run: () => boolean };
+    };
     switch (action) {
       case "insert":
         chain.insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run();

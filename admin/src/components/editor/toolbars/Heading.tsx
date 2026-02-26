@@ -1,19 +1,3 @@
-import type { Extension } from "@tiptap/core";
-import { HeadingOptions } from "@tiptap/extension-heading";
-import { ParagraphOptions } from "@tiptap/extension-paragraph";
-import {
-  Check,
-  Heading,
-  Heading1,
-  Heading2,
-  Heading3,
-  Heading4,
-  Heading5,
-  Heading6,
-  Pilcrow,
-  Type
-} from "lucide-react";
-import { useMemo } from "react";
 import styled from "styled-components";
 import {
   DropdownMenu,
@@ -22,6 +6,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../../ui/dropdown-menu";
+import {
+  Check,
+  Heading,
+  Heading1,
+  Heading2,
+  Heading3,
+  Heading4,
+  Heading5,
+  Heading6
+} from "../icons";
 import { useEditorContext } from "../partials/EditorProvider";
 import ToolbarButton from "../partials/ToolbarButton";
 

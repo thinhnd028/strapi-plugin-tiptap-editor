@@ -1,10 +1,10 @@
 import {
-    List,
-    ListOrdered,
-    ListTodo,
-    Check,
-    ChevronDown,
-} from "lucide-react";
+  Check,
+  ChevronDown,
+  List,
+  ListOrdered,
+  ListTodo,
+} from "../icons";
 import styled from "styled-components";
 
 import {

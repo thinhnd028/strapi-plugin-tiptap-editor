@@ -1,5 +1,5 @@
 import { forwardRef, useCallback, useState } from "react";
-import { LucideImage } from "lucide-react";
+import { LucideImage } from "../icons";
 import { useEditorContext } from "../partials/EditorProvider";
 import ToolbarButton, { ToolbarButtonProps } from "../partials/ToolbarButton";
 import styled from "styled-components";

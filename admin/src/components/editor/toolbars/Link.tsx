@@ -1,5 +1,5 @@
 import { forwardRef, useCallback, useState } from "react";
-import { Link2 } from "lucide-react";
+import { Link2 } from "../icons";
 import { useEditorContext } from "../partials/EditorProvider";
 import { LinkEditBlock } from "../partials/LinkEditBlock";
 import ToolbarButton, { ToolbarButtonProps } from "../partials/ToolbarButton";

@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import { Copy, ExternalLink, Pencil, Unlink2 } from "lucide-react";
+import { Copy, ExternalLink, Pencil, Unlink2 } from "../icons";
 import { Separator } from "../../ui/separator";
 import {
   Tooltip,
@@ -115,11 +115,7 @@ export const LinkPopoverBlock: React.FC<LinkPopoverBlockProps> = ({
               <Copy width={16} height={16} />
             </IconButton>
           </TooltipTrigger>
-          <StyledTooltipContent
-            onPointerDownOutside={(e) =>
-              e.target === e.currentTarget && e.preventDefault()
-            }
-          >
+          <StyledTooltipContent>
             <span>{copyTitle}</span>
           </StyledTooltipContent>
         </Tooltip>

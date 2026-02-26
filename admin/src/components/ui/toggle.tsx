@@ -1,13 +1,18 @@
 import { forwardRef } from "react";
-import * as TogglePrimitive from "@radix-ui/react-toggle";
 import styled, { css } from "styled-components";
 
-interface ToggleProps extends React.ComponentPropsWithoutRef<typeof TogglePrimitive.Root> {
+export interface ToggleProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "default" | "outline";
   size?: "default" | "sm" | "lg";
+  pressed?: boolean;
+  /** Alias for pressed - used by ToolbarButton */
+  isActive?: boolean;
+  /** @internal Radix-compat data-state */
+  "data-state"?: "on" | "off";
 }
 
-const StyledToggle = styled(TogglePrimitive.Root) <{
+const StyledToggle = styled.button<{
   $variant?: "default" | "outline";
   $size?: "default" | "sm" | "lg";
 }>`
@@ -19,52 +24,40 @@ const StyledToggle = styled(TogglePrimitive.Root) <{
   font-weight: 500;
   transition: all 0.2s ease-in-out;
   gap: 8px;
-  
-  /* Focus styles */
+
   &:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 1px ${props => props.theme.colors.primary500};
+    box-shadow: 0 0 0 1px ${(props) => props.theme.colors.primary500};
   }
-  
-  /* Disabled state */
+
   &:disabled {
     pointer-events: none;
     opacity: 0.5;
   }
-  
-  /* SVG styles */
+
   & svg {
     pointer-events: none;
     width: 18px;
     height: 18px;
     flex-shrink: 0;
   }
-  
-  /* Active state */
-  &[data-state="on"] {
-    background-color: ${props => props.theme.colors.neutral100};
-    color: ${props => props.theme.colors.neutral900};
+
+  /* Active state - matches data-state="on" from Radix */
+  &[data-state="on"],
+  &[aria-pressed="true"] {
+    background-color: ${(props) => props.theme.colors.neutral100};
+    color: ${(props) => props.theme.colors.neutral900};
   }
-  
+
   /* Variant styles */
-  ${props => {
+  ${(props) => {
     switch (props.$variant) {
-      case "default":
-        return css`
-          background-color: transparent;
-          color: ${props.theme.colors.neutral700};
-          
-          &:hover:not(:disabled) {
-            background-color: ${props.theme.colors.neutral100};
-            color: ${props.theme.colors.neutral800};
-          }
-        `;
       case "outline":
         return css`
           border: 1px solid ${props.theme.colors.neutral300};
           background-color: transparent;
           color: ${props.theme.colors.neutral700};
-          
+
           &:hover:not(:disabled) {
             background-color: ${props.theme.colors.neutral100};
             color: ${props.theme.colors.neutral800};
@@ -74,7 +67,7 @@ const StyledToggle = styled(TogglePrimitive.Root) <{
         return css`
           background-color: transparent;
           color: ${props.theme.colors.neutral700};
-          
+
           &:hover:not(:disabled) {
             background-color: ${props.theme.colors.neutral100};
             color: ${props.theme.colors.neutral800};
@@ -82,16 +75,10 @@ const StyledToggle = styled(TogglePrimitive.Root) <{
         `;
     }
   }}
-  
+
   /* Size styles */
-  ${props => {
+  ${(props) => {
     switch (props.$size) {
-      case "default":
-        return css`
-          height: 36px;
-          padding: 0 8px;
-          min-width: 36px;
-        `;
       case "sm":
         return css`
           height: 32px;
@@ -114,29 +101,46 @@ const StyledToggle = styled(TogglePrimitive.Root) <{
   }}
 `;
 
-const Toggle = forwardRef<
-  React.ElementRef<typeof TogglePrimitive.Root>,
-  ToggleProps
->(({ variant = "default", size = "default", ...props }, ref) => (
-  <StyledToggle
-    ref={ref}
-    $variant={variant}
-    $size={size}
-    {...props}
-  />
-));
+const Toggle = forwardRef<HTMLButtonElement, ToggleProps>(
+  (
+    {
+      variant = "default",
+      size = "default",
+      pressed,
+      isActive,
+      "data-state": dataState,
+      ...props
+    },
+    ref
+  ) => {
+    const isOn = pressed ?? isActive ?? (dataState === "on");
+    const computedState = dataState ?? (isOn ? "on" : "off");
 
-Toggle.displayName = TogglePrimitive.Root.displayName;
+    return (
+      <StyledToggle
+        ref={ref}
+        type="button"
+        role="button"
+        aria-pressed={isOn}
+        data-state={computedState}
+        $variant={variant}
+        $size={size}
+        {...props}
+      />
+    );
+  }
+);
 
-// Export untuk kompatibilitas (jika masih diperlukan)
+Toggle.displayName = "Toggle";
+
 const toggleVariants = {
   default: "default",
   outline: "outline",
   sizes: {
     default: "default",
     sm: "sm",
-    lg: "lg"
-  }
+    lg: "lg",
+  },
 };
 
 export { Toggle, toggleVariants };

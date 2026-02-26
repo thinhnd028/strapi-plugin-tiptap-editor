@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import { TextQuote } from "lucide-react";
+import { TextQuote } from "../icons";
 import { useEditorContext } from "../partials/EditorProvider";
 import ToolbarButton, {
   type ToolbarButtonProps,

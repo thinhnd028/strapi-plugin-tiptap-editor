@@ -4,7 +4,7 @@ import {
   AlignLeft,
   AlignRight,
   Check,
-} from "lucide-react";
+} from "../icons";
 import {
   DropdownMenu,
   DropdownMenuContent,

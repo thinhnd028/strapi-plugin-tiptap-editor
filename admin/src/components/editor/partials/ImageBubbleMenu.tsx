@@ -1,6 +1,6 @@
-import { BubbleMenu } from "@tiptap/react/menus";
+import { BubbleMenu } from "@tiptap/react";
 import { NodeSelection } from "@tiptap/pm/state";
-import { Captions } from "lucide-react";
+import { Captions } from "../icons";
 import { useCallback, useState } from "react";
 import styled from "styled-components";
 import { MediaFile, MediaLibraryModal } from "../../MediaLibraryModal";
@@ -115,15 +115,7 @@ export const ImageBubbleMenu = () => {
 
     return (
         <>
-            <BubbleMenu
-                editor={editor}
-                shouldShow={shouldShow}
-                options={{
-                    placement: "bottom",
-                    offset: 10,
-                    strategy: "absolute",
-                }}
-            >
+            <BubbleMenu editor={editor} shouldShow={shouldShow}>
                 <MenuContainer
                     onMouseDown={(e) => {
                         e.preventDefault();

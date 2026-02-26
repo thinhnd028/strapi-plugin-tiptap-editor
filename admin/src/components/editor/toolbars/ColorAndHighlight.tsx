@@ -2,7 +2,7 @@ import { Popover } from "@strapi/design-system";
 import type { Extension } from "@tiptap/core";
 import type { ColorOptions } from "@tiptap/extension-color";
 import type { HighlightOptions } from "@tiptap/extension-highlight";
-import { BaselineIcon, Check, ChevronDown, HighlighterIcon } from "lucide-react";
+import { BaselineIcon, Check, ChevronDown, HighlighterIcon } from "../icons";
 import { useState } from "react";
 import styled from "styled-components";
 import { Separator } from "../../ui/separator";

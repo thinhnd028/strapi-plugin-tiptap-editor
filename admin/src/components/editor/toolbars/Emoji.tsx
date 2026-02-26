@@ -1,16 +1,16 @@
 import { forwardRef, useState, useEffect, useMemo, useRef } from "react";
 import {
-    Smile,
-    Clock,
-    Cat,
-    Coffee,
-    Activity,
-    Car,
-    Lightbulb,
-    Hash,
-    Flag,
-    Search
-} from "lucide-react";
+  Activity,
+  Car,
+  Cat,
+  Clock,
+  Coffee,
+  Flag,
+  Hash,
+  Lightbulb,
+  Search,
+  Smile,
+} from "../icons";
 import { useEditorContext } from "../partials/EditorProvider";
 import ToolbarButton, { ToolbarButtonProps } from "../partials/ToolbarButton";
 import { Popover } from "@strapi/design-system";

@@ -1,9 +1,8 @@
 import { forwardRef, Fragment } from "react";
-import type { Extension } from "@tiptap/core";
-import { BoldIcon } from "lucide-react";
+import styled from "styled-components";
+import { BoldIcon } from "../icons";
 import { useEditorContext } from "../partials/EditorProvider";
 import ToolbarButton, { ToolbarButtonProps } from "../partials/ToolbarButton";
-import styled from "styled-components";
 
 // Styled Components
 const BoldIconStyled = styled(BoldIcon)`

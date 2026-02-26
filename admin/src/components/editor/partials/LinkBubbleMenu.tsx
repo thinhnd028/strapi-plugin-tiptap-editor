@@ -2,7 +2,7 @@ import { useCallback, useState, useEffect } from "react";
 import type { EditorState } from "@tiptap/pm/state";
 import type { EditorView } from "@tiptap/pm/view";
 import type { Editor } from "@tiptap/react";
-import { BubbleMenu } from "@tiptap/react/menus";
+import { BubbleMenu } from "@tiptap/react";
 import { useEditorContext } from "../partials/EditorProvider";
 import { LinkEditBlock } from "./LinkEditBlock";
 import { LinkPopoverBlock } from "./LinkPopoverBlock";
@@ -121,13 +121,7 @@ export const LinkBubbleMenu: React.FC<LinkBubbleMenuProps> = () => {
   }, [editor, updateLinkState]);
 
   return (
-    <BubbleMenu
-      editor={editor}
-      shouldShow={shouldShow}
-      options={{
-        placement: "bottom-start",
-      }}
-    >
+    <BubbleMenu editor={editor} shouldShow={shouldShow}>
       {showEdit ? (
         <LinkEditContainer>
           <LinkEditBlock

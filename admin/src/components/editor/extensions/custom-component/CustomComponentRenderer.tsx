@@ -1,6 +1,6 @@
 // src/tiptap/extensions/custom-component/CustomComponentRenderer.tsx
 import { NodeViewWrapper } from '@tiptap/react';
-import { Edit3, Trash } from 'lucide-react';
+import { Edit3, Trash } from "../../icons";
 import { useEffect } from 'react';
 import styled from 'styled-components';
 import { useCustomComponentEdit } from "./Store";

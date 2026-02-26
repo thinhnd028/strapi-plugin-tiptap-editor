@@ -1,6 +1,6 @@
 import { forwardRef } from "react";
 
-import { Undo2 } from "lucide-react";
+import { Undo2 } from "../icons";
 import { useEditorContext } from "../partials/EditorProvider";
 import ToolbarButton, { ToolbarButtonProps } from "../partials/ToolbarButton";
 import styled from "styled-components";

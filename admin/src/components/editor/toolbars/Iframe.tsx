@@ -1,5 +1,5 @@
 import { Popover, Grid } from "@strapi/design-system";
-import { Youtube } from "lucide-react";
+import { Youtube } from "../icons";
 import { forwardRef, useCallback, useState } from "react";
 import { Typography } from "@strapi/design-system";
 import styled from "styled-components";

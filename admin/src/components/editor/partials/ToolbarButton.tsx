@@ -1,12 +1,12 @@
 import { forwardRef } from "react";
-import type { TooltipContentProps } from "@radix-ui/react-tooltip";
+import type { TooltipContentProps } from "../../ui/tooltip";
 import { Toggle } from "../../ui/toggle";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "../../ui/tooltip";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown } from "../icons";
 import styled from "styled-components";
 
 export interface ToolbarButtonProps

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ArrowLeft, ArrowRight, Repeat, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Repeat, X } from "../icons";
 import { useEditorContext } from "../partials/EditorProvider";
 import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";

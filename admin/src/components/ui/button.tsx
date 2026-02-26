@@ -1,5 +1,5 @@
-import { forwardRef } from "react";
-import { Slot } from "@radix-ui/react-slot";
+import React, { forwardRef } from "react";
+import { Slot } from "./Slot";
 import styled, { css } from "styled-components";
 
 export interface ButtonProps
@@ -157,8 +157,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     if (asChild) {
       return (
-        <Comp ref={ref} {...props} />
-      );
+        <Slot ref={ref} {...props} />
+      ) as React.ReactElement;
     }
 
     return (
