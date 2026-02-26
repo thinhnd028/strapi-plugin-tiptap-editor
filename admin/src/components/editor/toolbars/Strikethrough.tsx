@@ -1,8 +1,3 @@
-import {
-  Check,
-  Strikethrough,
-  Underline as UnderlineIcon
-} from "lucide-react";
 import { forwardRef } from "react";
 import styled from "styled-components";
 import {
@@ -38,11 +33,26 @@ const DropdownMenuItemStyled = styled(DropdownMenuItem)`
   }
 `;
 
-const CheckIcon = styled(Check)`
-  width: 12px;
-  height: 12px;
-  color: ${props => props.theme.colors.primary500};
-`;
+const CheckIcon = () => (
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
+);
+
+const StrikethroughIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M16 4H9a3 3 0 0 0-2.83 4" />
+    <path d="M14 12a4 4 0 0 1 0 8H6" />
+    <line x1="4" x2="20" y1="12" y2="12" />
+  </svg>
+);
+
+const UnderlineIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M6 3v7a6 6 0 0 0 6 6 6 6 0 0 0 6-6V3" />
+    <line x1="4" y1="21" x2="20" y2="21" />
+  </svg>
+);
 
 const IconWrapper = styled.div`
   display: flex;
@@ -70,21 +80,27 @@ const StrikeThroughToolbar = forwardRef<HTMLButtonElement, ToolbarButtonProps>(
       return null;
     }
 
+    const hasUnderline = editor.extensionManager.extensions.some((e) => e.name === "underline");
+
     const items = [
-      {
-        action: () => editor.chain().focus().toggleUnderline().run(),
-        isActive: () => editor.isActive("underline"),
-        disabled: !editor.can().chain().focus().toggleUnderline().run(),
-        title: "Underline",
-        icon: <UnderlineIcon />,
-        shortcut: "mod+u",
-      },
+      ...(hasUnderline
+        ? [
+            {
+              action: () => editor.chain().focus().toggleUnderline().run(),
+              isActive: () => editor.isActive("underline"),
+              disabled: !editor.can().chain().focus().toggleUnderline().run(),
+              title: "Underline",
+              icon: <UnderlineIcon />,
+              shortcut: "mod+u",
+            },
+          ]
+        : []),
       {
         action: () => editor.chain().focus().toggleStrike().run(),
         isActive: () => editor.isActive("strike"),
         disabled: !editor.can().chain().focus().toggleStrike().run(),
         title: "Strikethrough",
-        icon: <Strikethrough />,
+        icon: <StrikethroughIcon />,
         shortcut: "mod+shift+x",
       },
     ];
@@ -100,8 +116,6 @@ const StrikeThroughToolbar = forwardRef<HTMLButtonElement, ToolbarButtonProps>(
     // Let's stick to Strikethrough icon for the trigger for now, or maybe Underline is more common?
     // Let's use Strikethrough since that's what the button was.
     const activeItem = items.find((item) => item.isActive());
-    const TriggerIcon = activeItem ? activeItem.icon : <Strikethrough />;
-    const TriggerTitle = activeItem ? activeItem.title : "Text Decoration";
 
     return (
       <DropdownMenu>
@@ -117,7 +131,7 @@ const StrikeThroughToolbar = forwardRef<HTMLButtonElement, ToolbarButtonProps>(
                 {...props}
               >
                 <IconWrapper>
-                  {activeItem ? activeItem.icon : <Strikethrough />}
+                  {activeItem ? activeItem.icon : <StrikethroughIcon />}
                 </IconWrapper>
               </ToolbarButton>
             </DropdownMenuTrigger>

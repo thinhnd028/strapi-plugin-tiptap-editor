@@ -3,7 +3,6 @@ import Image from "@tiptap/extension-image";
 import { NodeViewWrapper, ReactNodeViewRenderer } from "@tiptap/react";
 import { useEffect, useRef, useState, useCallback } from "react";
 import styled from "styled-components";
-import TextareaAutosize from 'react-textarea-autosize';
 
 // Types for Resize Config
 interface ResizeConfig {
@@ -206,15 +205,16 @@ const CaptionWrapper = styled.div`
   display: flex;
 `;
 
-const CaptionInput = styled(TextareaAutosize)`
+const CaptionInput = styled.textarea`
   flex: 1;
+  min-height: 24px;
+  resize: vertical;
   text-align: left;
   font-style: italic;
   color: #666;
   font-size: 14px;
   border: none;
   background: transparent;
-  resize: none;
   outline: none;
   font-family: inherit;
   padding: 0; 
@@ -466,7 +466,7 @@ export function TiptapImageComponent(props: NodeViewProps) {
         {node.attrs.caption !== false && node.attrs.caption !== null && (
           <CaptionWrapper>
             <CaptionInput
-              minRows={1}
+              rows={1}
               value={node.attrs.caption || ''}
               placeholder="Write a caption..."
               onChange={(e) => updateAttributes({ caption: e.target.value })}

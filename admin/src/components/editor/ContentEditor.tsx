@@ -1,9 +1,6 @@
 import { useRef } from "react";
 
 import { type Editor } from "@tiptap/core";
-import Color from "@tiptap/extension-color";
-import Gapcursor from "@tiptap/extension-gapcursor";
-import Highlight from "@tiptap/extension-highlight";
 import Table from "@tiptap/extension-table";
 import TableCell from "@tiptap/extension-table-cell";
 import TableHeader from "@tiptap/extension-table-header";
@@ -69,17 +66,12 @@ function ContentEditor({
                 ImageExtension,
                 FileHandler,
                 Iframe,
-                Color,
-                Gapcursor,
                 Table.configure({
                     resizable: true,
                 }),
                 TableRow,
                 TableHeader,
                 TableCell,
-                Highlight.configure({
-                    multicolor: true,
-                }),
                 TaskList,
                 TaskItem.configure({
                     nested: true,

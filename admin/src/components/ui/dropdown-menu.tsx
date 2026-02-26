@@ -1,7 +1,22 @@
 import { forwardRef } from "react";
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
-import { Check, ChevronRight, Circle } from "lucide-react";
 import styled, { css } from "styled-components";
+
+const CheckIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="20 6 9 17 4 12" />
+  </svg>
+);
+const ChevronRightIcon = () => (
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="9 18 15 12 9 6" />
+  </svg>
+);
+const CircleIcon = () => (
+  <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor">
+    <circle cx="4" cy="4" r="4" />
+  </svg>
+);
 
 const DropdownMenu = DropdownMenuPrimitive.Root;
 const DropdownMenuTrigger = DropdownMenuPrimitive.Trigger;
@@ -102,7 +117,7 @@ const DropdownMenuSubTrigger = forwardRef<
 >(({ inset, children, ...props }, ref) => (
   <StyledSubTrigger ref={ref} $inset={inset} {...props}>
     {children}
-    <ChevronRight style={{ width: '16px', height: '16px' }} />
+    <ChevronRightIcon />
   </StyledSubTrigger>
 ));
 DropdownMenuSubTrigger.displayName = DropdownMenuPrimitive.SubTrigger.displayName;
@@ -168,18 +183,13 @@ const CheckboxIndicator = styled(DropdownMenuPrimitive.ItemIndicator)`
   height: 14px;
 `;
 
-const StyledCheck = styled(Check)`
-  width: 16px;
-  height: 16px;
-`;
-
 const DropdownMenuCheckboxItem = forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.CheckboxItem>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.CheckboxItem>
 >(({ children, checked, ...props }, ref) => (
   <StyledCheckboxItem ref={ref} checked={checked} {...props}>
     <CheckboxIndicator>
-      <StyledCheck />
+      <CheckIcon />
     </CheckboxIndicator>
     {children}
   </StyledCheckboxItem>
@@ -203,19 +213,13 @@ const RadioIndicator = styled(DropdownMenuPrimitive.ItemIndicator)`
   height: 14px;
 `;
 
-const StyledCircle = styled(Circle)`
-  width: 8px;
-  height: 8px;
-  fill: currentColor;
-`;
-
 const DropdownMenuRadioItem = forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.RadioItem>,
   React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.RadioItem>
 >(({ children, ...props }, ref) => (
   <StyledRadioItem ref={ref} {...props}>
     <RadioIndicator>
-      <StyledCircle />
+      <CircleIcon />
     </RadioIndicator>
     {children}
   </StyledRadioItem>

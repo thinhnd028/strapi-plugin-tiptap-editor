@@ -1,5 +1,4 @@
 import React from "react";
-import { useIntl } from "react-intl";
 import { ContentEditor } from "./editor/ContentEditor";
 import type { Content } from "@tiptap/react";
 import { TiptapJSONInputProps } from "../types";
@@ -45,8 +44,6 @@ const ContentEditorInput = React.memo(React.forwardRef<{ focus: () => void }, Ti
         }: TiptapJSONInputProps,
         forwardedRef
     ) => {
-        const { formatMessage } = useIntl();
-
         const handleEditorChange = React.useCallback((content: Content) => {
             if (!onChange) return;
 
