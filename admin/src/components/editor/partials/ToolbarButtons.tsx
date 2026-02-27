@@ -1,6 +1,25 @@
-import { Fragment, memo, useMemo, lazy, Suspense } from "react";
+import { Fragment, memo, useMemo } from "react";
 import { Separator } from "../../ui/separator";
 import styled from "styled-components";
+
+import { HeadingToolbar } from "../toolbars/Heading";
+import { BoldToolbar } from "../toolbars/Bold";
+import { ItalicToolbar } from "../toolbars/Italic";
+import { StrikeThroughToolbar } from "../toolbars/Strikethrough";
+import { ListsToolbar } from "../toolbars/Lists";
+import { BlockquoteToolbar } from "../toolbars/Blockquote";
+import { AlignmentToolbar } from "../toolbars/Alignment";
+import { HorizontalRuleToolbar } from "../toolbars/HorizontalRule";
+import { HardBreakToolbar } from "../toolbars/HardBreak";
+import { ColorAndHighlightToolbar } from "../toolbars/ColorAndHighlight";
+import { LinkToolbar } from "../toolbars/Link";
+import { ImageToolbar } from "../toolbars/Image";
+import { EmojiToolbar } from "../toolbars/Emoji";
+import { TableToolbar } from "../toolbars/Table";
+import { IframeToolbar } from "../toolbars/Iframe";
+import { UndoToolbar } from "../toolbars/Undo";
+import { RedoToolbar } from "../toolbars/Redo";
+import { SearchAndReplaceToolbar } from "../toolbars/SearchAndReplace";
 
 // Styled Components
 const FlexGap = styled.div`
@@ -12,107 +31,27 @@ const StyledSeparator = styled(Separator)`
   height: 24px;
 `;
 
-// Lazy imports for toolbars (tanpa next/dynamic)
+// Static imports to avoid "Failed to fetch dynamically imported module" errors
+// that occur when plugin chunks are served from incorrect paths after deployment
 const ToolbarDefinitions = {
-  // === GRUP 1: HEADING & TEXT STYLE ===
-  heading: lazy(() =>
-    import("../toolbars/Heading").then((mod) => ({
-      default: mod.HeadingToolbar,
-    }))
-  ),
-  bold: lazy(() =>
-    import("../toolbars/Bold").then((mod) => ({
-      default: mod.BoldToolbar,
-    }))
-  ),
-  italic: lazy(() =>
-    import("../toolbars/Italic").then((mod) => ({
-      default: mod.ItalicToolbar,
-    }))
-  ),
-  strikethrough: lazy(() =>
-    import("../toolbars/Strikethrough").then((mod) => ({
-      default: mod.StrikeThroughToolbar,
-    }))
-  ),
-
-  // === GRUP 2: LISTS & INDENTATION ===
-  lists: lazy(() =>
-    import("../toolbars/Lists").then((mod) => ({
-      default: mod.ListsToolbar,
-    }))
-  ),
-  blockquote: lazy(() =>
-    import("../toolbars/Blockquote").then((mod) => ({
-      default: mod.BlockquoteToolbar,
-    }))
-  ),
-
-  // === GRUP 3: ALIGNMENT & FORMATTING ===
-  alignment: lazy(() =>
-    import("../toolbars/Alignment").then((mod) => ({
-      default: mod.AlignmentToolbar,
-    }))
-  ),
-  horizontalRule: lazy(() =>
-    import("../toolbars/HorizontalRule").then((mod) => ({
-      default: mod.HorizontalRuleToolbar,
-    }))
-  ),
-  hardBreak: lazy(() =>
-    import("../toolbars/HardBreak").then((mod) => ({
-      default: mod.HardBreakToolbar,
-    }))
-  ),
-  color: lazy(() =>
-    import("../toolbars/ColorAndHighlight").then((mod) => ({
-      default: mod.ColorAndHighlightToolbar,
-    }))
-  ),
-
-  // === GRUP 4: MEDIA & LINKS ===
-  link: lazy(() =>
-    import("../toolbars/Link").then((mod) => ({
-      default: mod.LinkToolbar,
-    }))
-  ),
-  image: lazy(() =>
-    import("../toolbars/Image").then((mod) => ({
-      default: mod.ImageToolbar,
-    }))
-  ),
-  emoji: lazy(() =>
-    import("../toolbars/Emoji").then((mod) => ({
-      default: mod.EmojiToolbar,
-    }))
-  ),
-  table: lazy(() =>
-    import("../toolbars/Table").then((mod) => ({
-      default: mod.TableToolbar,
-    }))
-  ),
-  iframe: lazy(() =>
-    import("../toolbars/Iframe").then((mod) => ({
-      default: mod.IframeToolbar,
-    }))
-  ),
-
-  // === GRUP 5: UTILS ===
-  undo: lazy(() =>
-    import("../toolbars/Undo").then((mod) => ({
-      default: mod.UndoToolbar,
-    }))
-  ),
-  redo: lazy(() =>
-    import("../toolbars/Redo").then((mod) => ({
-      default: mod.RedoToolbar,
-    }))
-  ),
-  searchAndReplace: lazy(() =>
-    import("../toolbars/SearchAndReplace").then((mod) => ({
-      default: mod.SearchAndReplaceToolbar,
-    }))
-  ),
+  heading: HeadingToolbar,
+  bold: BoldToolbar,
+  italic: ItalicToolbar,
+  strikethrough: StrikeThroughToolbar,
+  lists: ListsToolbar,
+  blockquote: BlockquoteToolbar,
+  alignment: AlignmentToolbar,
+  horizontalRule: HorizontalRuleToolbar,
+  hardBreak: HardBreakToolbar,
+  color: ColorAndHighlightToolbar,
+  link: LinkToolbar,
+  image: ImageToolbar,
+  emoji: EmojiToolbar,
+  table: TableToolbar,
+  iframe: IframeToolbar,
+  undo: UndoToolbar,
+  redo: RedoToolbar,
+  searchAndReplace: SearchAndReplaceToolbar,
 };
 
 export type ToolbarButtonsType =
@@ -165,9 +104,7 @@ const ToolbarButtons: React.FC<{ toolbars?: ToolbarButtonsType[] }> = memo(
     return (
       <Fragment>
         {Components.map((c, index) => (
-          <Suspense fallback={null} key={index}>
-            <c.Component {...c.props} />
-          </Suspense>
+          <c.Component key={index} {...c.props} />
         ))}
       </Fragment>
     );
